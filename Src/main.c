@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "tim.h"
 #include "gpio.h"
 
@@ -91,23 +92,26 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   MX_TIM4_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim2);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   HAL_TIM_Base_Start(&htim4);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+  HAL_ADC_Start(&hadc1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    uint8_t i = 0;
-    for (i = 0; i < 0xFF; i+=5)
+    uint8_t conversion = 0;
+    if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK)
     {
-      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, i);
-      HAL_Delay(100);
+      conversion = HAL_ADC_GetValue(&hadc1);
+      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, conversion);  
     }
+    
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
