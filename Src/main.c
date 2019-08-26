@@ -54,7 +54,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void convert_uint8_ascii(uint8_t numericValue, uint8_t * convertedString);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -108,10 +108,18 @@ int main(void)
   while (1)
   {
     uint8_t conversion = 0;
+    uint8_t conversionString[5] = {0};
     if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK)
     {
       conversion = HAL_ADC_GetValue(&hadc1);
       PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, conversion);  
+      convert_uint8_ascii(conversion, conversionString);
+      conversionString[3] = '\n';
+      conversionString[4] = '\r';
+      if (HAL_UART_Transmit(&huart2, (uint8_t *)conversionString, sizeof(conversionString)/sizeof(uint8_t), 1000)!=HAL_OK)
+      {
+        Error_Handler();
+      }
     }
     
     /* USER CODE END WHILE */
@@ -164,7 +172,20 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void convert_uint8_ascii(uint8_t numericValue, uint8_t * convertedString)
+{
+  uint8_t index = 2;
+  if (convertedString != NULL)
+  {
+    do
+    {
+      int digit = numericValue % 10;
+      convertedString[index] = (0x30 + digit);
+      numericValue /= 10;
+      index--;
+    } while (numericValue > 0);
+  }
+}
 /* USER CODE END 4 */
 
 /**
