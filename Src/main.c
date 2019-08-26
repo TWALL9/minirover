@@ -27,7 +27,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include <stdint.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -54,7 +55,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void convert_uint8_ascii(uint8_t numericValue, uint8_t * convertedString);
+void convert_uint8_ascii(uint8_t numericValue, uint8_t * convertedString, uint8_t len);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -105,21 +106,34 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  uint32_t msTicks = 0;
+
   while (1)
   {
-    uint8_t conversion = 0;
-    uint8_t conversionString[5] = {0};
+    uint8_t dutyCycle = 0;
+    uint8_t dutyCycleAsciiConversion[5] = {0};
+    
     if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK)
     {
-      conversion = HAL_ADC_GetValue(&hadc1);
-      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, conversion);  
-      convert_uint8_ascii(conversion, conversionString);
-      conversionString[3] = '\n';
-      conversionString[4] = '\r';
-      if (HAL_UART_Transmit(&huart2, (uint8_t *)conversionString, sizeof(conversionString)/sizeof(uint8_t), 1000)!=HAL_OK)
-      {
-        Error_Handler();
-      }
+      dutyCycle = HAL_ADC_GetValue(&hadc1);
+      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, dutyCycle);  
+      
+      convert_uint8_ascii(dutyCycle, dutyCycleAsciiConversion, 3);
+      dutyCycleAsciiConversion[3] = '\n';
+      dutyCycleAsciiConversion[4] = '\r';
+
+      printf("duty cycle: %d\n\r", dutyCycle);
+    }
+    else
+    {
+      Error_Handler();
+    }
+
+    if (HAL_GetTick() - msTicks > 100)
+    {
+      // print the encoder speed.
+      msTicks = HAL_GetTick();
     }
     
     /* USER CODE END WHILE */
@@ -172,17 +186,16 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void convert_uint8_ascii(uint8_t numericValue, uint8_t * convertedString)
+void convert_uint8_ascii(uint8_t numericValue, uint8_t * convertedString, uint8_t len)
 {
-  uint8_t index = 2;
-  if (convertedString != NULL)
+  if (convertedString != NULL && len >= 3)
   {
     do
     {
       int digit = numericValue % 10;
-      convertedString[index] = (0x30 + digit);
+      convertedString[len] = (0x30 + digit);
       numericValue /= 10;
-      index--;
+      len--;
     } while (numericValue > 0);
   }
 }

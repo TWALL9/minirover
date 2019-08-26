@@ -1,5 +1,5 @@
 // todo
-1. figure out if all 8 motor outputs are PWM
+1. figure out if all 8 motor outputs are PWM (YES).
 2. GPIO input based on encoder (poll/vs interrupt)
 3. speed controller
 4. external sensors (polling???)

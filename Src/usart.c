@@ -22,6 +22,16 @@
 
 /* USER CODE BEGIN 0 */
 
+#include "stdio.h"
+
+#ifdef __GNUC__
+  /* With GCC, small printf (option LD Linker->Libraries->Small printf
+     set to 'Yes') calls __io_putchar() */
+  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
+
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart2;
@@ -100,6 +110,33 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 } 
 
 /* USER CODE BEGIN 1 */
+bool USART2_PrintBuffer(uint8_t * buffer, uint16_t len)
+{
+  bool status = false;
+
+  if (buffer == NULL)
+  {
+    return false;
+  }
+  else
+  {
+    if (HAL_UART_Transmit(&huart2, (uint8_t *)buffer, len, 1000) == HAL_OK)
+    {
+      status = true;
+    }
+  }
+
+  return status;
+}
+
+PUTCHAR_PROTOTYPE
+{
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
+  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF); 
+
+  return ch;
+}
 
 /* USER CODE END 1 */
 

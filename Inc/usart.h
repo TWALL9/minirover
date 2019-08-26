@@ -27,7 +27,8 @@
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include <stdint.h>
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 extern UART_HandleTypeDef huart2;
@@ -39,7 +40,7 @@ extern UART_HandleTypeDef huart2;
 void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+bool USART2_PrintBuffer(uint8_t * buffer, uint16_t len);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
