@@ -49,7 +49,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+ uint32_t encVal = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -123,7 +123,7 @@ int main(void)
       dutyCycleAsciiConversion[3] = '\n';
       dutyCycleAsciiConversion[4] = '\r';
 
-      printf("duty cycle: %d\n\r", dutyCycle);
+//      printf("duty cycle: %d\n\r", dutyCycle);
     }
     else
     {
@@ -133,7 +133,9 @@ int main(void)
     if (HAL_GetTick() - msTicks > 100)
     {
       // print the encoder speed.
+      printf("encoder value: %d\n\r", encVal);
       msTicks = HAL_GetTick();
+      encVal = 0;
     }
     
     /* USER CODE END WHILE */
@@ -199,6 +201,35 @@ void convert_uint8_ascii(uint8_t numericValue, uint8_t * convertedString, uint8_
     } while (numericValue > 0);
   }
 }
+
+
+/**
+  * @brief EXTI line detection callbacks
+  * @param GPIO_Pin: Specifies the pins connected EXTI line
+  * @retval None
+  */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  switch (GPIO_Pin)
+  {
+    case GPIO_PIN_0:
+    {
+      break;
+    }
+
+    case GPIO_PIN_9:
+    {
+      encVal++;
+      break;
+    }
+
+    default:
+    {
+      break;
+    }
+  }
+}
+
 /* USER CODE END 4 */
 
 /**
