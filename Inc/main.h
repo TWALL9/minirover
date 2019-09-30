@@ -78,12 +78,17 @@ void Error_Handler(void);
 #define LD5_GPIO_Port GPIOD
 #define PWM4_4_Pin GPIO_PIN_15
 #define PWM4_4_GPIO_Port GPIOD
+#define BL_MOTOR_1_Pin GPIO_PIN_6
+#define BL_MOTOR_1_GPIO_Port GPIOC
+#define BL_MOTOR_2_Pin GPIO_PIN_7
+#define BL_MOTOR_2_GPIO_Port GPIOC
+#define BL_MOTOR_ENC_Pin GPIO_PIN_9
+#define BL_MOTOR_ENC_GPIO_Port GPIOC
+#define BL_MOTOR_ENC_EXTI_IRQn EXTI9_5_IRQn
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
-#define PWM2_1_Pin GPIO_PIN_15
-#define PWM2_1_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
