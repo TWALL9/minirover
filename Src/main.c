@@ -49,7 +49,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
- uint32_t encVal = 0;
+ uint32_t backLeftMotorEnc = 0;
+ uint32_t backRightMotorEnc = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,6 +101,8 @@ int main(void)
   HAL_TIM_Base_Start(&htim3);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
   HAL_TIM_Base_Start(&htim4);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
   HAL_ADC_Start(&hadc1);
@@ -120,13 +123,15 @@ int main(void)
       dutyCycle = HAL_ADC_GetValue(&hadc1);
       PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, dutyCycle);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_1, dutyCycle);
+      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_3, dutyCycle);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_2 , 0);
+      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_4 , 0);
       
       convert_uint8_ascii(dutyCycle, dutyCycleAsciiConversion, 3);
       dutyCycleAsciiConversion[3] = '\n';
       dutyCycleAsciiConversion[4] = '\r';
 
-      printf("duty cycle: %d\n\r", dutyCycle);
+//      printf("duty cycle: %d\n\r", dutyCycle);
     }
     else
     {
@@ -136,9 +141,10 @@ int main(void)
     if (HAL_GetTick() - msTicks > 100)
     {
       // print the encoder speed.
-//      printf("encoder value: %d\n\r", encVal);
+      printf("encoder value: BL: %lu BR: %lu\n\r", backLeftMotorEnc, backRightMotorEnc);
       msTicks = HAL_GetTick();
-      encVal = 0;
+      backLeftMotorEnc = 0;
+      backRightMotorEnc = 0;
     }
     
     /* USER CODE END WHILE */
@@ -220,9 +226,15 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
       break;
     }
 
-    case GPIO_PIN_9:
+    case GPIO_PIN_4:
     {
-      encVal++;
+      backRightMotorEnc++;
+      break;
+    }
+
+    case GPIO_PIN_5:
+    {
+      backLeftMotorEnc++;
       break;
     }
 

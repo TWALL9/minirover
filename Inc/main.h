@@ -58,6 +58,9 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define BR_MOTOR_ENC_Pin GPIO_PIN_4
+#define BR_MOTOR_ENC_GPIO_Port GPIOE
+#define BR_MOTOR_ENC_EXTI_IRQn EXTI4_IRQn
 #define PC14_OSC32_IN_Pin GPIO_PIN_14
 #define PC14_OSC32_IN_GPIO_Port GPIOC
 #define PC15_OSC32_OUT_Pin GPIO_PIN_15
@@ -68,6 +71,9 @@ void Error_Handler(void);
 #define PH1_OSC_OUT_GPIO_Port GPIOH
 #define ADC1_IN1_Pin GPIO_PIN_1
 #define ADC1_IN1_GPIO_Port GPIOA
+#define BL_MOTOR_ENC_Pin GPIO_PIN_5
+#define BL_MOTOR_ENC_GPIO_Port GPIOC
+#define BL_MOTOR_ENC_EXTI_IRQn EXTI9_5_IRQn
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
 #define LD4_Pin GPIO_PIN_12
@@ -82,9 +88,10 @@ void Error_Handler(void);
 #define BL_MOTOR_1_GPIO_Port GPIOC
 #define BL_MOTOR_2_Pin GPIO_PIN_7
 #define BL_MOTOR_2_GPIO_Port GPIOC
-#define BL_MOTOR_ENC_Pin GPIO_PIN_9
-#define BL_MOTOR_ENC_GPIO_Port GPIOC
-#define BL_MOTOR_ENC_EXTI_IRQn EXTI9_5_IRQn
+#define BR_MOTOR_1_Pin GPIO_PIN_8
+#define BR_MOTOR_1_GPIO_Port GPIOC
+#define BR_MOTOR_2_Pin GPIO_PIN_9
+#define BR_MOTOR_2_GPIO_Port GPIOC
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
