@@ -1,21 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * All rights reserved.</center></h2>
+ *
+ * This software component is licensed by ST under Ultimate Liberty license
+ * SLA0044, the "License"; You may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at:
+ *                             www.st.com/SLA0044
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -27,8 +27,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,14 +49,15 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
- uint32_t backLeftMotorEnc = 0;
- uint32_t backRightMotorEnc = 0;
+uint32_t backLeftMotorEnc = 0;
+uint32_t backRightMotorEnc = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void convert_uint8_ascii(uint8_t numericValue, uint8_t * convertedString, uint8_t len);
+void convert_uint8_ascii(uint8_t numericValue, uint8_t *convertedString,
+                         uint8_t len);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -113,40 +114,36 @@ int main(void)
 
   uint32_t msTicks = 0;
 
-  while (1)
-  {
+  while (1) {
     uint8_t dutyCycle = 0;
     uint8_t dutyCycleAsciiConversion[5] = {0};
-    
-    if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK)
-    {
+
+    if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) {
       dutyCycle = HAL_ADC_GetValue(&hadc1);
       PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, dutyCycle);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_1, dutyCycle);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_3, dutyCycle);
-      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_2 , 0);
-      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_4 , 0);
-      
+      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_2, 0);
+      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_4, 0);
+
       convert_uint8_ascii(dutyCycle, dutyCycleAsciiConversion, 3);
       dutyCycleAsciiConversion[3] = '\n';
       dutyCycleAsciiConversion[4] = '\r';
 
-//      printf("duty cycle: %d\n\r", dutyCycle);
-    }
-    else
-    {
+      //      printf("duty cycle: %d\n\r", dutyCycle);
+    } else {
       Error_Handler();
     }
 
-    if (HAL_GetTick() - msTicks > 100)
-    {
+    if (HAL_GetTick() - msTicks > 100) {
       // print the encoder speed.
-      printf("encoder value: BL: %lu BR: %lu\n\r", backLeftMotorEnc, backRightMotorEnc);
+      printf("encoder value: BL: %lu BR: %lu\n\r", backLeftMotorEnc,
+             backRightMotorEnc);
       msTicks = HAL_GetTick();
       backLeftMotorEnc = 0;
       backRightMotorEnc = 0;
     }
-    
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -197,12 +194,10 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void convert_uint8_ascii(uint8_t numericValue, uint8_t * convertedString, uint8_t len)
-{
-  if (convertedString != NULL && len >= 3)
-  {
-    do
-    {
+void convert_uint8_ascii(uint8_t numericValue, uint8_t *convertedString,
+                         uint8_t len) {
+  if (convertedString != NULL && len >= 3) {
+    do {
       int digit = numericValue % 10;
       convertedString[len] = (0x30 + digit);
       numericValue /= 10;
@@ -211,37 +206,28 @@ void convert_uint8_ascii(uint8_t numericValue, uint8_t * convertedString, uint8_
   }
 }
 
-
 /**
-  * @brief EXTI line detection callbacks
-  * @param GPIO_Pin: Specifies the pins connected EXTI line
-  * @retval None
-  */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  switch (GPIO_Pin)
-  {
-    case GPIO_PIN_0:
-    {
-      break;
-    }
+ * @brief EXTI line detection callbacks
+ * @param GPIO_Pin: Specifies the pins connected EXTI line
+ * @retval None
+ */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+  switch (GPIO_Pin) {
+  case GPIO_PIN_0: {
+    break;
+  }
 
-    case GPIO_PIN_4:
-    {
-      backRightMotorEnc++;
-      break;
-    }
+  case GPIO_PIN_4: {
+    backRightMotorEnc++;
+    break;
+  }
 
-    case GPIO_PIN_5:
-    {
-      backLeftMotorEnc++;
-      break;
-    }
+  case GPIO_PIN_5: {
+    backLeftMotorEnc++;
+    break;
+  }
 
-    default:
-    {
-      break;
-    }
+  default: { break; }
   }
 }
 
@@ -270,8 +256,10 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 { 
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* User can add his own implementation to report the file name and line
+     number,
+     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line)
+   */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
