@@ -51,6 +51,8 @@
 /* USER CODE BEGIN PV */
 uint32_t backLeftMotorEnc = 0;
 uint32_t backRightMotorEnc = 0;
+uint32_t frontLeftMotorEnc = 0;
+uint32_t frontRightMotorEnc = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -98,13 +100,19 @@ int main(void)
   MX_ADC1_Init();
   MX_USART2_UART_Init();
   MX_TIM3_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_Base_Start(&htim2);
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
   HAL_TIM_Base_Start(&htim3);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
   HAL_TIM_Base_Start(&htim4);
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
   HAL_ADC_Start(&hadc1);
   /* USER CODE END 2 */
@@ -113,35 +121,66 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   uint32_t msTicks = 0;
-
+  uint8_t dutyCycle = 0;
+  bool slowDown = false;
   while (1) {
-    uint8_t dutyCycle = 0;
-    uint8_t dutyCycleAsciiConversion[5] = {0};
+    // if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) 
+    // {
+    //   dutyCycle = HAL_ADC_GetValue(&hadc1);
+      // PWM_SetDutyCycle(&htim2, TIM_CHANNEL_3, dutyCycle);
+      // PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, dutyCycle);
+      // PWM_SetDutyCycle(&htim3, TIM_CHANNEL_1, dutyCycle);
+      // PWM_SetDutyCycle(&htim3, TIM_CHANNEL_3, dutyCycle);
+      // PWM_SetDutyCycle(&htim4, TIM_CHANNEL_2, dutyCycle);
+      // PWM_SetDutyCycle(&htim2, TIM_CHANNEL_4, 0);
+      // PWM_SetDutyCycle(&htim3, TIM_CHANNEL_2, 0);
+      // PWM_SetDutyCycle(&htim3, TIM_CHANNEL_4, 0);
+      // PWM_SetDutyCycle(&htim4, TIM_CHANNEL_3, 0);
+    // }
+    // else 
+    // {
+    //   Error_Handler();
+    // }
 
-    if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) {
-      dutyCycle = HAL_ADC_GetValue(&hadc1);
+    if (HAL_GetTick() - msTicks > 500)
+    {
+      // print the encoder speed.
+      // printf("%d, %lu, %lu, %lu, %lu\n\r", dutyCycle, backLeftMotorEnc, backRightMotorEnc, frontLeftMotorEnc, frontRightMotorEnc);
+
+      if (slowDown)
+      {
+        dutyCycle--;
+      }
+      else
+      {
+        dutyCycle++;
+      }
+
+      if (dutyCycle == 255)
+      {
+        slowDown = true;
+      }
+      if (dutyCycle == 0)
+      {
+        slowDown = false;
+      }
+
+      PWM_SetDutyCycle(&htim2, TIM_CHANNEL_3, dutyCycle);
       PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, dutyCycle);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_1, dutyCycle);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_3, dutyCycle);
+      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_2, dutyCycle);
+      PWM_SetDutyCycle(&htim2, TIM_CHANNEL_4, 0);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_2, 0);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_4, 0);
+      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_3, 0);
 
-      convert_uint8_ascii(dutyCycle, dutyCycleAsciiConversion, 3);
-      dutyCycleAsciiConversion[3] = '\n';
-      dutyCycleAsciiConversion[4] = '\r';
-
-      //      printf("duty cycle: %d\n\r", dutyCycle);
-    } else {
-      Error_Handler();
-    }
-
-    if (HAL_GetTick() - msTicks > 100) {
-      // print the encoder speed.
-      printf("encoder value: BL: %lu BR: %lu\n\r", backLeftMotorEnc,
-             backRightMotorEnc);
+      printf("%d, %lu, %lu\n\r", dutyCycle, frontLeftMotorEnc, frontRightMotorEnc);
       msTicks = HAL_GetTick();
       backLeftMotorEnc = 0;
       backRightMotorEnc = 0;
+      frontLeftMotorEnc = 0;
+      frontRightMotorEnc = 0;
     }
 
     /* USER CODE END WHILE */
@@ -194,8 +233,8 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void convert_uint8_ascii(uint8_t numericValue, uint8_t *convertedString,
-                         uint8_t len) {
+void convert_uint8_ascii(uint8_t numericValue, uint8_t *convertedString, uint8_t len) 
+{
   if (convertedString != NULL && len >= 3) {
     do {
       int digit = numericValue % 10;
@@ -211,23 +250,40 @@ void convert_uint8_ascii(uint8_t numericValue, uint8_t *convertedString,
  * @param GPIO_Pin: Specifies the pins connected EXTI line
  * @retval None
  */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  switch (GPIO_Pin) {
-  case GPIO_PIN_0: {
-    break;
-  }
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) 
+{
+  switch (GPIO_Pin) 
+  {
+    case GPIO_PIN_0: 
+    {
+      break;
+    }
 
-  case GPIO_PIN_4: {
-    backRightMotorEnc++;
-    break;
-  }
+    case GPIO_PIN_1: 
+    {
+      frontLeftMotorEnc++;
+      break;
+    }
 
-  case GPIO_PIN_5: {
-    backLeftMotorEnc++;
-    break;
-  }
+    case GPIO_PIN_2: 
+    {
+      frontRightMotorEnc++;
+      break;
+    }
 
-  default: { break; }
+    case GPIO_PIN_4: 
+    {
+      backRightMotorEnc++;
+      break;
+    }
+
+    case GPIO_PIN_5: 
+    {
+      backLeftMotorEnc++;
+      break;
+    }
+
+    default: { break; }
   }
 }
 

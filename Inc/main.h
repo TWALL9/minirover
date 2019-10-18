@@ -76,14 +76,18 @@ void Error_Handler(void);
 #define BL_MOTOR_ENC_EXTI_IRQn EXTI9_5_IRQn
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
+#define FR_MOTOR_1_Pin GPIO_PIN_10
+#define FR_MOTOR_1_GPIO_Port GPIOB
+#define FR_MOTOR_2_Pin GPIO_PIN_11
+#define FR_MOTOR_2_GPIO_Port GPIOB
 #define LD4_Pin GPIO_PIN_12
 #define LD4_GPIO_Port GPIOD
 #define LD3_Pin GPIO_PIN_13
 #define LD3_GPIO_Port GPIOD
 #define LD5_Pin GPIO_PIN_14
 #define LD5_GPIO_Port GPIOD
-#define PWM4_4_Pin GPIO_PIN_15
-#define PWM4_4_GPIO_Port GPIOD
+#define LD6_Pin GPIO_PIN_15
+#define LD6_GPIO_Port GPIOD
 #define BL_MOTOR_1_Pin GPIO_PIN_6
 #define BL_MOTOR_1_GPIO_Port GPIOC
 #define BL_MOTOR_2_Pin GPIO_PIN_7
@@ -96,6 +100,16 @@ void Error_Handler(void);
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
+#define FL_MOTOR_ENC_Pin GPIO_PIN_1
+#define FL_MOTOR_ENC_GPIO_Port GPIOD
+#define FL_MOTOR_ENC_EXTI_IRQn EXTI1_IRQn
+#define FR_MOTOR_ENC_Pin GPIO_PIN_2
+#define FR_MOTOR_ENC_GPIO_Port GPIOD
+#define FR_MOTOR_ENC_EXTI_IRQn EXTI2_IRQn
+#define FL_MOTOR_1_Pin GPIO_PIN_7
+#define FL_MOTOR_1_GPIO_Port GPIOB
+#define FL_MOTOR_2_Pin GPIO_PIN_8
+#define FL_MOTOR_2_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
