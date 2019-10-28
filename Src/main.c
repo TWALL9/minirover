@@ -165,17 +165,17 @@ int main(void)
         slowDown = false;
       }
 
-      PWM_SetDutyCycle(&htim2, TIM_CHANNEL_3, dutyCycle);
-      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, dutyCycle);
-      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_1, dutyCycle);
-      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_3, dutyCycle);
-      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_2, dutyCycle);
+      PWM_SetDutyCycle(&htim2, TIM_CHANNEL_3, 128);
+      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, 128);
+      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_1, 128);
+      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_3, 128);
+      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_2, 128);
       PWM_SetDutyCycle(&htim2, TIM_CHANNEL_4, 0);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_2, 0);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_4, 0);
       PWM_SetDutyCycle(&htim4, TIM_CHANNEL_3, 0);
 
-      printf("%d, %lu, %lu\n\r", dutyCycle, frontLeftMotorEnc, frontRightMotorEnc);
+      printf("%d, %lu, %lu, %lu, %lu\n\r", dutyCycle, backLeftMotorEnc, backRightMotorEnc, frontLeftMotorEnc, frontRightMotorEnc);
       msTicks = HAL_GetTick();
       backLeftMotorEnc = 0;
       backRightMotorEnc = 0;
