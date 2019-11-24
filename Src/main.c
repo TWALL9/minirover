@@ -122,59 +122,29 @@ int main(void)
 
   uint32_t msTicks = 0;
   uint8_t dutyCycle = 0;
-  bool slowDown = false;
+  
   while (1) {
-    // if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) 
-    // {
-    //   dutyCycle = HAL_ADC_GetValue(&hadc1);
-      // PWM_SetDutyCycle(&htim2, TIM_CHANNEL_3, dutyCycle);
-      // PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, dutyCycle);
-      // PWM_SetDutyCycle(&htim3, TIM_CHANNEL_1, dutyCycle);
-      // PWM_SetDutyCycle(&htim3, TIM_CHANNEL_3, dutyCycle);
-      // PWM_SetDutyCycle(&htim4, TIM_CHANNEL_2, dutyCycle);
-      // PWM_SetDutyCycle(&htim2, TIM_CHANNEL_4, 0);
-      // PWM_SetDutyCycle(&htim3, TIM_CHANNEL_2, 0);
-      // PWM_SetDutyCycle(&htim3, TIM_CHANNEL_4, 0);
-      // PWM_SetDutyCycle(&htim4, TIM_CHANNEL_3, 0);
-    // }
-    // else 
-    // {
-    //   Error_Handler();
-    // }
-
-    if (HAL_GetTick() - msTicks > 500)
+    if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) 
     {
-      // print the encoder speed.
-      // printf("%d, %lu, %lu, %lu, %lu\n\r", dutyCycle, backLeftMotorEnc, backRightMotorEnc, frontLeftMotorEnc, frontRightMotorEnc);
-
-      if (slowDown)
-      {
-        dutyCycle--;
-      }
-      else
-      {
-        dutyCycle++;
-      }
-
-      if (dutyCycle == 255)
-      {
-        slowDown = true;
-      }
-      if (dutyCycle == 0)
-      {
-        slowDown = false;
-      }
-
-      PWM_SetDutyCycle(&htim2, TIM_CHANNEL_3, 128);
-      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, 128);
-      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_1, 128);
-      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_3, 128);
-      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_2, 128);
+      dutyCycle = HAL_ADC_GetValue(&hadc1);
+      PWM_SetDutyCycle(&htim2, TIM_CHANNEL_3, dutyCycle);
+      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, dutyCycle);
+      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_1, dutyCycle);
+      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_3, dutyCycle);
+      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_2, dutyCycle);
       PWM_SetDutyCycle(&htim2, TIM_CHANNEL_4, 0);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_2, 0);
       PWM_SetDutyCycle(&htim3, TIM_CHANNEL_4, 0);
       PWM_SetDutyCycle(&htim4, TIM_CHANNEL_3, 0);
+    }
+    else 
+    {
+      Error_Handler();
+    }
 
+    if (HAL_GetTick() - msTicks > 500)
+    {
+      // print the encoder speed.
       printf("%d, %lu, %lu, %lu, %lu\n\r", dutyCycle, backLeftMotorEnc, backRightMotorEnc, frontLeftMotorEnc, frontRightMotorEnc);
       msTicks = HAL_GetTick();
       backLeftMotorEnc = 0;
