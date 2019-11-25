@@ -94,12 +94,6 @@ void Error_Handler(void);
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
-#define FL_MOTOR_ENC_Pin GPIO_PIN_1
-#define FL_MOTOR_ENC_GPIO_Port GPIOD
-#define FL_MOTOR_ENC_EXTI_IRQn EXTI1_IRQn
-#define FR_MOTOR_ENC_Pin GPIO_PIN_2
-#define FR_MOTOR_ENC_GPIO_Port GPIOD
-#define FR_MOTOR_ENC_EXTI_IRQn EXTI2_IRQn
 #define BL_MOTOR_ENC_Pin GPIO_PIN_4
 #define BL_MOTOR_ENC_GPIO_Port GPIOD
 #define BL_MOTOR_ENC_EXTI_IRQn EXTI4_IRQn

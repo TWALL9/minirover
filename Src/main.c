@@ -29,6 +29,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
 #include <stdio.h>
+#include "motor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,15 +52,11 @@
 /* USER CODE BEGIN PV */
 uint32_t backLeftMotorEnc = 0;
 uint32_t backRightMotorEnc = 0;
-uint32_t frontLeftMotorEnc = 0;
-uint32_t frontRightMotorEnc = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void convert_uint8_ascii(uint8_t numericValue, uint8_t *convertedString,
-                         uint8_t len);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -105,15 +102,57 @@ int main(void)
   HAL_TIM_Base_Start(&htim2);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
-  HAL_TIM_Base_Start(&htim3);
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
-  HAL_TIM_Base_Start(&htim4);
-  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
-  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
-  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+  
+  MotorHandleTypeDef backLeftMotor = 
+  {
+    .input1Timer = &htim3,
+    .input2Timer = &htim3,
+    .input1 = TIM_CHANNEL_1,
+    .input2 = TIM_CHANNEL_2,
+    .direction = MOTOR_NEUTRAL,
+    .dutyCycle = 0
+  };
+
+  MotorHandleTypeDef backRightMotor = 
+  {
+    .input1Timer = &htim3,
+    .input2Timer = &htim3,
+    .input1 = TIM_CHANNEL_3,
+    .input2 = TIM_CHANNEL_4,
+    .direction = MOTOR_NEUTRAL,
+    .dutyCycle = 0
+  };
+
+  MotorHandleTypeDef frontLeftMotor = 
+  {
+    .input1Timer = &htim4,
+    .input2Timer = &htim4,
+    .input1 = TIM_CHANNEL_2,
+    .input2 = TIM_CHANNEL_3,
+    .direction = MOTOR_NEUTRAL,
+    .dutyCycle = 0
+  };
+  
+  MotorHandleTypeDef frontRightMotor = 
+  {
+    .input1Timer = &htim2,
+    .input2Timer = &htim2,
+    .input1 = TIM_CHANNEL_3,
+    .input2 = TIM_CHANNEL_4,
+    .direction = MOTOR_NEUTRAL,
+    .dutyCycle = 0
+  };
+  
+  motor_Init(REAR_LEFT, backLeftMotor);
+  motor_Init(REAR_RIGHT, backRightMotor);
+  motor_Init(FRONT_LEFT, frontLeftMotor);
+  motor_Init(FRONT_RIGHT, frontRightMotor);
+
+  motor_SetDirection(REAR_LEFT, MOTOR_FORWARD);
+  motor_SetDirection(REAR_RIGHT, MOTOR_FORWARD);
+  motor_SetDirection(FRONT_LEFT, MOTOR_FORWARD);
+  motor_SetDirection(FRONT_RIGHT, MOTOR_FORWARD);
+
   HAL_ADC_Start(&hadc1);
   /* USER CODE END 2 */
 
@@ -127,15 +166,10 @@ int main(void)
     if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) 
     {
       dutyCycle = HAL_ADC_GetValue(&hadc1);
-      PWM_SetDutyCycle(&htim2, TIM_CHANNEL_3, dutyCycle);
-      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_4, dutyCycle);
-      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_1, dutyCycle);
-      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_3, dutyCycle);
-      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_2, dutyCycle);
-      PWM_SetDutyCycle(&htim2, TIM_CHANNEL_4, 0);
-      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_2, 0);
-      PWM_SetDutyCycle(&htim3, TIM_CHANNEL_4, 0);
-      PWM_SetDutyCycle(&htim4, TIM_CHANNEL_3, 0);
+      motor_SetSpeed(REAR_LEFT, dutyCycle);
+      motor_SetSpeed(REAR_RIGHT, dutyCycle);
+      motor_SetSpeed(FRONT_LEFT, dutyCycle);
+      motor_SetSpeed(FRONT_RIGHT, dutyCycle);
     }
     else 
     {
@@ -145,12 +179,10 @@ int main(void)
     if (HAL_GetTick() - msTicks > 500)
     {
       // print the encoder speed.
-      printf("%d, %lu, %lu, %lu, %lu\n\r", dutyCycle, backLeftMotorEnc, backRightMotorEnc, frontLeftMotorEnc, frontRightMotorEnc);
+      printf("%lu, %lu\n\r", backLeftMotorEnc, backRightMotorEnc);
       msTicks = HAL_GetTick();
       backLeftMotorEnc = 0;
       backRightMotorEnc = 0;
-      frontLeftMotorEnc = 0;
-      frontRightMotorEnc = 0;
     }
 
     /* USER CODE END WHILE */
@@ -203,17 +235,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void convert_uint8_ascii(uint8_t numericValue, uint8_t *convertedString, uint8_t len) 
-{
-  if (convertedString != NULL && len >= 3) {
-    do {
-      int digit = numericValue % 10;
-      convertedString[len] = (0x30 + digit);
-      numericValue /= 10;
-      len--;
-    } while (numericValue > 0);
-  }
-}
 
 /**
  * @brief EXTI line detection callbacks
@@ -226,18 +247,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   {
     case GPIO_PIN_0: 
     {
-      break;
-    }
-
-    case GPIO_PIN_1: 
-    {
-      frontLeftMotorEnc++;
-      break;
-    }
-
-    case GPIO_PIN_2: 
-    {
-      frontRightMotorEnc++;
       break;
     }
 

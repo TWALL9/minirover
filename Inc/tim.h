@@ -45,7 +45,7 @@ void MX_TIM4_Init(void);
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                                             
 /* USER CODE BEGIN Prototypes */
-TIM_HandleTypeDef * HAL_TIM_GetHandleTypeDef_TIM2(void);
+TIM_HandleTypeDef * HAL_TIM_GetHandleTypeDef_TIM3(void);
 uint32_t PWM_SetDutyCycle(TIM_HandleTypeDef *timerHandle, uint32_t channel, uint8_t dutyCycle);
 /* USER CODE END Prototypes */
 
