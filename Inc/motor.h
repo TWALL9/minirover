@@ -41,13 +41,13 @@ typedef struct
     uint32_t input2;
     MotorDirection direction;
     uint8_t dutyCycle;
-} MotorHandleTypeDef;
+} MotorHandle_t;
 
 /**
  * @brief Add new motor to list of available motors
  * @retval HAL_StatusTypeDef indicating if PWM is available
  */ 
-HAL_StatusTypeDef motor_Init(MotorLocation location, MotorHandleTypeDef motor);
+HAL_StatusTypeDef motor_Init(MotorLocation location, MotorHandle_t motor);
 
 /**
  * @brief Set direction of motor.  Acted upon instantaneously.

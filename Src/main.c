@@ -103,7 +103,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
   
-  MotorHandleTypeDef backLeftMotor = 
+  MotorHandle_t backLeftMotor = 
   {
     .input1Timer = &htim3,
     .input2Timer = &htim3,
@@ -113,7 +113,7 @@ int main(void)
     .dutyCycle = 0
   };
 
-  MotorHandleTypeDef backRightMotor = 
+  MotorHandle_t backRightMotor = 
   {
     .input1Timer = &htim3,
     .input2Timer = &htim3,
@@ -123,7 +123,7 @@ int main(void)
     .dutyCycle = 0
   };
 
-  MotorHandleTypeDef frontLeftMotor = 
+  MotorHandle_t frontLeftMotor = 
   {
     .input1Timer = &htim4,
     .input2Timer = &htim4,
@@ -133,7 +133,7 @@ int main(void)
     .dutyCycle = 0
   };
   
-  MotorHandleTypeDef frontRightMotor = 
+  MotorHandle_t frontRightMotor = 
   {
     .input1Timer = &htim2,
     .input2Timer = &htim2,

@@ -2,9 +2,9 @@
 #include "tim.h"
 #include "stm32f4xx_hal_def.h"
 
-MotorHandleTypeDef motors[NUM_MOTORS] = {};
+MotorHandle_t motors[NUM_MOTORS] = {};
 
-HAL_StatusTypeDef motor_Init(MotorLocation location, MotorHandleTypeDef motor)
+HAL_StatusTypeDef motor_Init(MotorLocation location, MotorHandle_t motor)
 {
     HAL_StatusTypeDef pwmStatus = HAL_OK;
     
@@ -28,7 +28,7 @@ void motor_SetDirection(MotorLocation location, MotorDirection newDirection)
 {
     if (location < NUM_MOTORS)
     {
-        MotorHandleTypeDef motor = motors[location];
+        MotorHandle_t motor = motors[location];
         motor.direction = newDirection;
         motor_SetSpeed(location, motor.dutyCycle);
     }
@@ -38,7 +38,7 @@ void motor_SetSpeed(MotorLocation location, uint8_t dutyCycle)
 {
     if (location < NUM_MOTORS)
     {
-        MotorHandleTypeDef motor = motors[location];
+        MotorHandle_t motor = motors[location];
         motor.dutyCycle = dutyCycle;
         switch (motor.direction)
         {
