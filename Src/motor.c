@@ -28,9 +28,9 @@ void motor_SetDirection(MotorLocation location, MotorDirection newDirection)
 {
     if (location < NUM_MOTORS)
     {
-        MotorHandle_t motor = motors[location];
-        motor.direction = newDirection;
-        motor_SetSpeed(location, motor.dutyCycle);
+        MotorHandle_t * motor = &motors[location];
+        motor->direction = newDirection;
+        motor_SetSpeed(location, motor->dutyCycle);
     }
 }
 
@@ -38,35 +38,35 @@ void motor_SetSpeed(MotorLocation location, uint8_t dutyCycle)
 {
     if (location < NUM_MOTORS)
     {
-        MotorHandle_t motor = motors[location];
-        motor.dutyCycle = dutyCycle;
-        switch (motor.direction)
+        MotorHandle_t * motor = &motors[location];
+        motor->dutyCycle = dutyCycle;
+        switch (motor->direction)
         {
             case (MOTOR_FORWARD):
             {
-                PWM_SetDutyCycle(motor.input1Timer, motor.input1, dutyCycle);
-                PWM_SetDutyCycle(motor.input2Timer, motor.input2, 0);
+                PWM_SetDutyCycle(motor->input1Timer, motor->input1, dutyCycle);
+                PWM_SetDutyCycle(motor->input2Timer, motor->input2, 0);
                 break;
             }
 
             case (MOTOR_REVERSE):
             {
-                PWM_SetDutyCycle(motor.input1Timer, motor.input1, 0);
-                PWM_SetDutyCycle(motor.input2Timer, motor.input2, dutyCycle);
+                PWM_SetDutyCycle(motor->input1Timer, motor->input1, 0);
+                PWM_SetDutyCycle(motor->input2Timer, motor->input2, dutyCycle);
                 break;
             }
 
             case (MOTOR_NEUTRAL):
             {
-                PWM_SetDutyCycle(motor.input1Timer, motor.input1, 0);
-                PWM_SetDutyCycle(motor.input2Timer, motor.input2, 0);
+                PWM_SetDutyCycle(motor->input1Timer, motor->input1, 0);
+                PWM_SetDutyCycle(motor->input2Timer, motor->input2, 0);
                 break;
             }
 
             case (MOTOR_BRAKE):
             {
-                PWM_SetDutyCycle(motor.input1Timer, motor.input1, 0xFF);
-                PWM_SetDutyCycle(motor.input2Timer, motor.input2, 0xFF);
+                PWM_SetDutyCycle(motor->input1Timer, motor->input1, 0xFF);
+                PWM_SetDutyCycle(motor->input2Timer, motor->input2, 0xFF);
                 break;
             }
         }

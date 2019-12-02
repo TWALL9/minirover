@@ -170,6 +170,7 @@ int main(void)
       motor_SetSpeed(REAR_RIGHT, dutyCycle);
       motor_SetSpeed(FRONT_LEFT, dutyCycle);
       motor_SetSpeed(FRONT_RIGHT, dutyCycle);
+      printf("%d\n\r", dutyCycle);
     }
     else 
     {
@@ -179,7 +180,7 @@ int main(void)
     if (HAL_GetTick() - msTicks > 500)
     {
       // print the encoder speed.
-      printf("%lu, %lu\n\r", backLeftMotorEnc, backRightMotorEnc);
+      //printf("%lu, %lu\n\r", backLeftMotorEnc, backRightMotorEnc);
       msTicks = HAL_GetTick();
       backLeftMotorEnc = 0;
       backRightMotorEnc = 0;
