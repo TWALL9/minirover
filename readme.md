@@ -1,11 +1,11 @@
 **// todo**
--[x] figure out if all 8 motor outputs are PWM (YES).
--[x] GPIO input based on encoder (poll/vs interrupt)
-	a. Encoders I have don't work very well.
--[] speed controller
-	a. PID loop
--[] external sensors
-	a. Accelerometer/Gyro first
+- [x] figure out if all 8 motor outputs are PWM (YES).
+- [x] GPIO input based on encoder (poll/vs interrupt)
+	- Encoders I have don't work very well.
+- [ ] speed controller
+	- PID loop
+- [ ] external sensors
+	- Accelerometer/Gyro first
 
 **// external design decisions**
 * abstraction
