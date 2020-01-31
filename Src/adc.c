@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -75,12 +75,15 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
   
     __HAL_RCC_GPIOA_CLK_ENABLE();
     /**ADC1 GPIO Configuration    
-    PA1     ------> ADC1_IN1 
+    PA1     ------> ADC1_IN1
+    PA4     ------> ADC1_IN4
+    PA5     ------> ADC1_IN5
+    PA6     ------> ADC1_IN6 
     */
-    GPIO_InitStruct.Pin = ADC1_IN1_Pin;
+    GPIO_InitStruct.Pin = ADC1_IN1_Pin|ACCEL_X_Pin|ACCEL_Y_Pin|ACCEL_Z_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(ADC1_IN1_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* USER CODE BEGIN ADC1_MspInit 1 */
 
@@ -100,9 +103,12 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
     __HAL_RCC_ADC1_CLK_DISABLE();
   
     /**ADC1 GPIO Configuration    
-    PA1     ------> ADC1_IN1 
+    PA1     ------> ADC1_IN1
+    PA4     ------> ADC1_IN4
+    PA5     ------> ADC1_IN5
+    PA6     ------> ADC1_IN6 
     */
-    HAL_GPIO_DeInit(ADC1_IN1_GPIO_Port, ADC1_IN1_Pin);
+    HAL_GPIO_DeInit(GPIOA, ADC1_IN1_Pin|ACCEL_X_Pin|ACCEL_Y_Pin|ACCEL_Z_Pin);
 
   /* USER CODE BEGIN ADC1_MspDeInit 1 */
 

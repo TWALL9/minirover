@@ -14,6 +14,13 @@ typedef struct
     uint32_t accel_z;
 } accelerometer_t;
 
+typedef enum
+{
+    ACCEL_OK = 0,
+    ACCEL_ERR_NO_INIT,
+    ACCEL_ERR_INIT_FAIL,
+} accel_status_t;
+
 void accelerometer_Init(ADC_HandleTypeDef * adc_x, 
                         ADC_HandleTypeDef * adc_y, ADC_HandleTypeDef * adc_z);
 
