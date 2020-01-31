@@ -160,7 +160,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   uint32_t msTicks = 0;
-  uint8_t dutyCycle = 0;
+  uint32_t dutyCycle = 0;
   
   while (1) {
     if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) 
@@ -170,7 +170,7 @@ int main(void)
       motor_SetSpeed(REAR_RIGHT, dutyCycle);
       motor_SetSpeed(FRONT_LEFT, dutyCycle);
       motor_SetSpeed(FRONT_RIGHT, dutyCycle);
-      printf("%d\n\r", dutyCycle);
+      printf("%lu\n\r", dutyCycle);
     }
     else 
     {
