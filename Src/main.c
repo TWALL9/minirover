@@ -21,6 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -52,6 +53,7 @@
 /* USER CODE BEGIN PV */
 uint32_t backLeftMotorEnc = 0;
 uint32_t backRightMotorEnc = 0;
+volatile uint16_t dutyCycle = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,11 +95,12 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_TIM4_Init();
+  MX_DMA_Init();
   MX_ADC1_Init();
   MX_USART2_UART_Init();
   MX_TIM3_Init();
   MX_TIM2_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim2);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
@@ -153,30 +156,21 @@ int main(void)
   motor_SetDirection(FRONT_LEFT, MOTOR_FORWARD);
   motor_SetDirection(FRONT_RIGHT, MOTOR_FORWARD);
 
-  HAL_ADC_Start(&hadc1);
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&dutyCycle, sizeof(dutyCycle));
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
   uint32_t msTicks = 0;
-  uint32_t dutyCycle = 0;
   
   while (1) {
-    if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) 
-    {
-      dutyCycle = HAL_ADC_GetValue(&hadc1);
-      motor_SetSpeed(REAR_LEFT, dutyCycle);
-      motor_SetSpeed(REAR_RIGHT, dutyCycle);
-      motor_SetSpeed(FRONT_LEFT, dutyCycle);
-      motor_SetSpeed(FRONT_RIGHT, dutyCycle);
-      printf("%lu\n\r", dutyCycle);
-    }
-    else 
-    {
-      Error_Handler();
-    }
-
+    
+    motor_SetSpeed(REAR_LEFT, dutyCycle);
+    motor_SetSpeed(REAR_RIGHT, dutyCycle);
+    motor_SetSpeed(FRONT_LEFT, dutyCycle);
+    motor_SetSpeed(FRONT_RIGHT, dutyCycle);
+    printf("%u\n\r", dutyCycle);
     if (HAL_GetTick() - msTicks > 500)
     {
       // print the encoder speed.
