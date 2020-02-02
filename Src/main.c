@@ -53,7 +53,7 @@
 /* USER CODE BEGIN PV */
 uint32_t backLeftMotorEnc = 0;
 uint32_t backRightMotorEnc = 0;
-volatile uint16_t dutyCycle = 0;
+volatile uint8_t adcOutput[4] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -156,21 +156,22 @@ int main(void)
   motor_SetDirection(FRONT_LEFT, MOTOR_FORWARD);
   motor_SetDirection(FRONT_RIGHT, MOTOR_FORWARD);
 
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&dutyCycle, sizeof(dutyCycle));
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&adcOutput, sizeof(adcOutput));
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
   uint32_t msTicks = 0;
-  
+  uint8_t dutyCycle = 0;
   while (1) {
     
+    dutyCycle = adcOutput[0];
     motor_SetSpeed(REAR_LEFT, dutyCycle);
     motor_SetSpeed(REAR_RIGHT, dutyCycle);
     motor_SetSpeed(FRONT_LEFT, dutyCycle);
     motor_SetSpeed(FRONT_RIGHT, dutyCycle);
-    printf("%u\n\r", dutyCycle);
+    printf("%u, %u, %u, %u, \n\r", adcOutput[0], adcOutput[1], adcOutput[2], adcOutput[3]);
     if (HAL_GetTick() - msTicks > 500)
     {
       // print the encoder speed.
