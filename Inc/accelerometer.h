@@ -1,5 +1,5 @@
-#ifndef __adc_H
-#define __adc_H
+#ifndef ACCELEROMETER_H
+#define ACCELEROMETER_H
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -9,21 +9,17 @@
 
 typedef struct 
 {
-    uint32_t accel_x;
-    uint32_t accel_y;
-    uint32_t accel_z;
+    int16_t accel_x;
+    int16_t accel_y;
+    int16_t accel_z;
 } accelerometer_t;
 
-typedef enum
-{
-    ACCEL_OK = 0,
-    ACCEL_ERR_NO_INIT,
-    ACCEL_ERR_INIT_FAIL,
-} accel_status_t;
+void accelerometer_Update(accelerometer_t * updatedAccelValues);
 
-void accelerometer_Init(ADC_HandleTypeDef * adc_x, 
-                        ADC_HandleTypeDef * adc_y, ADC_HandleTypeDef * adc_z);
+accelerometer_t accelerometer_GetSmoothed(void);
 
-accelerometer_t accelerometer_Update(void);
- 
+#ifdef __cplusplus
+ }
 #endif
+
+#endif /* MOTOR_H */

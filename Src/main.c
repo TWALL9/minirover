@@ -31,6 +31,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "motor.h"
+#include "accelerometer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,7 +54,7 @@
 /* USER CODE BEGIN PV */
 uint32_t backLeftMotorEnc = 0;
 uint32_t backRightMotorEnc = 0;
-volatile uint8_t adcOutput[4] = {0};
+volatile uint16_t adcOutput[4] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -171,7 +172,9 @@ int main(void)
     motor_SetSpeed(REAR_RIGHT, dutyCycle);
     motor_SetSpeed(FRONT_LEFT, dutyCycle);
     motor_SetSpeed(FRONT_RIGHT, dutyCycle);
-    printf("%u, %u, %u, %u, \n\r", adcOutput[0], adcOutput[1], adcOutput[2], adcOutput[3]);
+    accelerometer_Update((accelerometer_t * )&adcOutput[1]);
+    accelerometer_t newSmoothedAccel = accelerometer_GetSmoothed();
+    printf("%u, %u, %u, %u, \n\r", adcOutput[0], newSmoothedAccel.accel_x, newSmoothedAccel.accel_y, newSmoothedAccel.accel_z);
     if (HAL_GetTick() - msTicks > 500)
     {
       // print the encoder speed.
