@@ -54,7 +54,7 @@
 /* USER CODE BEGIN PV */
 uint32_t backLeftMotorEnc = 0;
 uint32_t backRightMotorEnc = 0;
-volatile uint16_t adcOutput[4] = {0};
+volatile uint16_t adcOutput[3] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -164,17 +164,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   uint32_t msTicks = 0;
-  uint8_t dutyCycle = 0;
   while (1) {
     
-    dutyCycle = adcOutput[0];
-    motor_SetSpeed(REAR_LEFT, dutyCycle);
-    motor_SetSpeed(REAR_RIGHT, dutyCycle);
-    motor_SetSpeed(FRONT_LEFT, dutyCycle);
-    motor_SetSpeed(FRONT_RIGHT, dutyCycle);
-    accelerometer_Update((accelerometer_t * )&adcOutput[1]);
+    // calculate duty cycle based on accelerometer and encoder
+
+    accelerometer_Update((accelerometer_t * )&adcOutput);
     accelerometer_t newSmoothedAccel = accelerometer_GetSmoothed();
-    printf("%u, %u, %u, %u, \n\r", adcOutput[0], newSmoothedAccel.accel_x, newSmoothedAccel.accel_y, newSmoothedAccel.accel_z);
+    printf(" %u, %u, %u, \n\r", newSmoothedAccel.accel_x, newSmoothedAccel.accel_y, newSmoothedAccel.accel_z);
     if (HAL_GetTick() - msTicks > 500)
     {
       // print the encoder speed.
