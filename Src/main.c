@@ -170,7 +170,7 @@ int main(void)
       motor_SetSpeed(REAR_RIGHT, dutyCycle);
       motor_SetSpeed(FRONT_LEFT, dutyCycle);
       motor_SetSpeed(FRONT_RIGHT, dutyCycle);
-      printf("%d\n\r", dutyCycle);
+      //printf("%d\n\r", dutyCycle);
     }
     else 
     {
@@ -180,7 +180,7 @@ int main(void)
     if (HAL_GetTick() - msTicks > 500)
     {
       // print the encoder speed.
-      //printf("%lu, %lu\n\r", backLeftMotorEnc, backRightMotorEnc);
+      printf("%d, %lu\n\r", dutyCycle, backRightMotorEnc);
       msTicks = HAL_GetTick();
       backLeftMotorEnc = 0;
       backRightMotorEnc = 0;
@@ -253,7 +253,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
     case GPIO_PIN_4: 
     {
-      backRightMotorEnc++;
+      if (HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_4) == GPIO_PIN_SET)
+      {
+        backRightMotorEnc++;
+      }
       break;
     }
 

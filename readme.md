@@ -10,7 +10,7 @@ Since this is a from-the-ground-up process for learning how to do things properl
 **// todo**
 - [x] figure out if all 8 motor outputs are PWM (YES).
 - [x] GPIO input based on encoder (poll/vs interrupt)
-	- Encoders I have don't work very well. (DF Robot fails me again.)
+	- [x] Encoders I have don't work very well. (DF Robot fails me again.)
 - [ ] speed controller
 	- PID loop
 	- Kalman filter for speed/positional control (accel/gyro)
