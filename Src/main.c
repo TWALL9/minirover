@@ -30,6 +30,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "motor.h"
+#include "log.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,6 +100,11 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+
+  log_Init();
+  log_SetEnable(true);
+  log_SetLevel(LOG_DEBUG);
+
   HAL_TIM_Base_Start(&htim2);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
@@ -180,7 +186,7 @@ int main(void)
     if (HAL_GetTick() - msTicks > 500)
     {
       // print the encoder speed.
-      printf("%d, %lu\n\r", dutyCycle, backRightMotorEnc);
+      log_DEBUG("%d, %lu\n\r", dutyCycle, backRightMotorEnc);
       msTicks = HAL_GetTick();
       backLeftMotorEnc = 0;
       backRightMotorEnc = 0;
