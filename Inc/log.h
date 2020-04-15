@@ -23,6 +23,7 @@ typedef enum
 void log_Init(void);
 void log_SetEnable(bool enable);
 void log_SetLevel(LogLevel_t level);
+void log_SetColours(bool enable);
 
 #define log_DEBUG(...) log_Log(LOG_DEBUG, __VA_ARGS__)
 #define log_INFO(...)  log_Log(LOG_INFO, __VA_ARGS__)
