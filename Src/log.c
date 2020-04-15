@@ -6,7 +6,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-#define MAX_DEBUG_LEN 256
+#define MAX_DEBUG_LEN 64
 
 static struct
 {
@@ -46,7 +46,10 @@ void log_Log(LogLevel_t level, const char *fmt, ...)
     va_list args;
     va_start(args, fmt);
 
-    if (0 < vsprintf(buf, fmt, args))
+    uint8_t debugLen = vsnprintf(buf, MAX_DEBUG_LEN, fmt, args);
+    debugLen > 64? debugLen = 64 : debugLen;
+
+    if (debugLen > 0)
     {
         USART2_PrintBuffer((uint8_t *)buf, strlen(buf));
     }
@@ -57,3 +60,5 @@ void log_Log(LogLevel_t level, const char *fmt, ...)
     
     va_end(args);
 }
+
+// TODO: Add queue to add debugs to, so that they may be dumped out the uart when ready (or over AT protocol)
