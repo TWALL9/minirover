@@ -30,6 +30,7 @@
 
 /* USER CODE END Includes */
 
+extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
@@ -38,6 +39,7 @@ extern TIM_HandleTypeDef htim4;
 
 /* USER CODE END Private defines */
 
+void MX_TIM1_Init(void);
 void MX_TIM2_Init(void);
 void MX_TIM3_Init(void);
 void MX_TIM4_Init(void);
@@ -47,6 +49,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* USER CODE BEGIN Prototypes */
 TIM_HandleTypeDef * HAL_TIM_GetHandleTypeDef_TIM3(void);
 uint32_t PWM_SetDutyCycle(TIM_HandleTypeDef *timerHandle, uint32_t channel, uint8_t dutyCycle);
+uint16_t TIM1_GetCount(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

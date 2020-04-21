@@ -68,6 +68,10 @@ void Error_Handler(void);
 #define PH1_OSC_OUT_GPIO_Port GPIOH
 #define ADC1_IN1_Pin GPIO_PIN_1
 #define ADC1_IN1_GPIO_Port GPIOA
+#define US1_OUT_Pin GPIO_PIN_6
+#define US1_OUT_GPIO_Port GPIOA
+#define US1_IN_Pin GPIO_PIN_7
+#define US1_IN_GPIO_Port GPIOA
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
 #define FR_MOTOR_1_Pin GPIO_PIN_10
