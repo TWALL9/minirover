@@ -4,7 +4,9 @@
 #include "main.h"
 #include "tim.h"
 
-static void hc_sr04_ConfigureTrig(GPIO_reference_t * reference);
+#define CM_US_CONVERSION ((float)0.0171821)
+
+static void hc_sr04_ConfigureTrig(GPIO_reference_t *reference);
 static void hc_sr04_ConfigureEcho(GPIO_reference_t *reference);
 
 void hc_sr04_Init(hc_sr04_t *handle)
@@ -23,9 +25,14 @@ float hc_sr04_Read(hc_sr04_t *handle)
         case(IDLE):
         case(COMPLETE):
         {
+            // Ensure pin is reset before triggering
+            HAL_GPIO_WritePin(handle->trigPin.port, handle->trigPin.pin, GPIO_PIN_RESET);
+            TIM_MicrosecondDelay(2);
+
             HAL_GPIO_WritePin(handle->trigPin.port, handle->trigPin.pin, GPIO_PIN_SET);
             TIM_MicrosecondDelay(10);
             HAL_GPIO_WritePin(handle->trigPin.port, handle->trigPin.pin, GPIO_PIN_RESET);
+            
             handle->state = WAIT_FOR_RESPONSE;
             break;
         }
@@ -44,7 +51,7 @@ float hc_sr04_Read(hc_sr04_t *handle)
             if (HAL_GPIO_ReadPin(handle->echoPin.port, handle->echoPin.pin) == GPIO_PIN_RESET)
             {
                 uint16_t roundTrip = TIM_GetMicroseconds() - handle->responseTimer;
-                float distance = roundTrip * 0.034 / 2;
+                float distance = roundTrip * CM_US_CONVERSION;
                 handle->state = COMPLETE;
                 return distance;
             }
