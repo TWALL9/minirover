@@ -408,10 +408,19 @@ uint32_t PWM_SetDutyCycle(TIM_HandleTypeDef *timerHandle, uint32_t channel, uint
     return pulse;
 }
 
-uint16_t TIM14_GetCount(void)
+uint16_t TIM_GetMicroseconds(void)
 {
     // TIM1 CNT is every 1us.  Used for uS timers
     return (uint16_t)htim14.Instance->CNT;
+}
+
+void TIM_MicrosecondDelay(uint16_t delay)
+{
+    uint16_t currentCount = TIM_GetMicroseconds();
+    while(TIM_GetMicroseconds() <= currentCount + delay)
+    {
+        // do nothing
+    }
 }
 
 /* USER CODE END 1 */

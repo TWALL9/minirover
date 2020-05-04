@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include "motor.h"
 #include "log.h"
+#include "hc_sr04.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -170,31 +171,57 @@ int main(void)
 
   uint32_t msTicks = 0;
   uint8_t dutyCycle = 0;
+
+    hc_sr04_t ultrasonicHandle = 
+    {
+        .trigPin = 
+        {
+            .port = GPIOD,
+            .pin = GPIO_PIN_14,
+        },
+        .echoPin = 
+        {
+            .port = GPIOD,
+            .pin = GPIO_PIN_15,
+        },
+        .responseTimer = 0,
+        .state = IDLE
+    };
+
+    hc_sr04_Init(&ultrasonicHandle);
   
-  while (1) {
-    if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) 
-    {
-      dutyCycle = HAL_ADC_GetValue(&hadc1);
-      motor_SetSpeed(REAR_LEFT, dutyCycle);
-      motor_SetSpeed(REAR_RIGHT, dutyCycle);
-      motor_SetSpeed(FRONT_LEFT, dutyCycle);
-      motor_SetSpeed(FRONT_RIGHT, dutyCycle);
-      //printf("%d\n\r", dutyCycle);
-    }
-    else 
-    {
-      Error_Handler();
-    }
+    while (1) {
+        if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) 
+        {
+            dutyCycle = HAL_ADC_GetValue(&hadc1);
+            motor_SetSpeed(REAR_LEFT, dutyCycle);
+            motor_SetSpeed(REAR_RIGHT, dutyCycle);
+            motor_SetSpeed(FRONT_LEFT, dutyCycle);
+            motor_SetSpeed(FRONT_RIGHT, dutyCycle);
+          //printf("%d\n\r", dutyCycle);
+        }
+        else 
+        {
+            Error_Handler();
+        }
 
-    if (HAL_GetTick() - msTicks > 500)
-    {
-      // print the encoder speed.
-      log_DEBUG("%d, %lu\n\r", dutyCycle, backRightMotorEnc);
-      msTicks = HAL_GetTick();
-      backLeftMotorEnc = 0;
-      backRightMotorEnc = 0;
-    }
+        if (HAL_GetTick() - msTicks > 500)
+        {
+            // print the encoder speed.
+            //log_DEBUG("%d, %lu\n\r", dutyCycle, backRightMotorEnc);
+            msTicks = HAL_GetTick();
+            backLeftMotorEnc = 0;
+            backRightMotorEnc = 0;
+        }
 
+        float distance = hc_sr04_Read(&ultrasonicHandle);
+        if (ultrasonicHandle.state == COMPLETE)
+        {
+            log_DEBUG("distance (cm): %f", distance);
+        }
+
+        
+  
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

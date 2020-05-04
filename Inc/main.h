@@ -37,7 +37,11 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+typedef struct
+{
+    GPIO_TypeDef * port;
+    uint16_t pin;
+} GPIO_reference_t;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

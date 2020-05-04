@@ -49,7 +49,8 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* USER CODE BEGIN Prototypes */
 TIM_HandleTypeDef * HAL_TIM_GetHandleTypeDef_TIM3(void);
 uint32_t PWM_SetDutyCycle(TIM_HandleTypeDef *timerHandle, uint32_t channel, uint8_t dutyCycle);
-uint16_t TIM1_GetCount(void);
+uint16_t TIM_GetMicroseconds(void);
+void TIM_MicrosecondDelay(uint16_t delay);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
