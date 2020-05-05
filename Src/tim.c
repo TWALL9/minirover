@@ -21,7 +21,7 @@
 #include "tim.h"
 
 /* USER CODE BEGIN 0 */
-
+uint32_t msTicks = 0;
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
@@ -189,7 +189,7 @@ void MX_TIM14_Init(void)
   htim14.Instance = TIM14;
   htim14.Init.Prescaler = 84;
   htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim14.Init.Period = 10000;
+  htim14.Init.Period = 1000;
   htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim14.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim14) != HAL_OK)
@@ -242,6 +242,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
   /* USER CODE END TIM14_MspInit 0 */
     /* TIM14 clock enable */
     __HAL_RCC_TIM14_CLK_ENABLE();
+
+    /* TIM14 interrupt Init */
+    HAL_NVIC_SetPriority(TIM8_TRG_COM_TIM14_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(TIM8_TRG_COM_TIM14_IRQn);
   /* USER CODE BEGIN TIM14_MspInit 1 */
 
   /* USER CODE END TIM14_MspInit 1 */
@@ -373,6 +377,9 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
   /* USER CODE END TIM14_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_TIM14_CLK_DISABLE();
+
+    /* TIM14 interrupt Deinit */
+    HAL_NVIC_DisableIRQ(TIM8_TRG_COM_TIM14_IRQn);
   /* USER CODE BEGIN TIM14_MspDeInit 1 */
 
   /* USER CODE END TIM14_MspDeInit 1 */
@@ -408,19 +415,41 @@ uint32_t PWM_SetDutyCycle(TIM_HandleTypeDef *timerHandle, uint32_t channel, uint
     return pulse;
 }
 
-uint16_t TIM_GetMicroseconds(void)
+void TIM_IncrementMsTick(void)
+{
+    msTicks++;
+}
+
+void TIM_MillisecondDelay(uint16_t delay)
+{
+    uint32_t start = msTicks;
+    uint32_t current = 0;
+    do
+    {
+        current = msTicks;
+    } while (current - start < delay);
+}
+
+uint32_t TIM_GetMilliseconds(void)
+{
+    return msTicks;
+}
+
+uint32_t TIM_GetMicroseconds(void)
 {
     // TIM1 CNT is every 1us.  Used for uS timers
-    return (uint16_t)htim14.Instance->CNT;
+    return (uint32_t)htim14.Instance->CNT;
 }
 
 void TIM_MicrosecondDelay(uint16_t delay)
 {
-    uint16_t currentCount = TIM_GetMicroseconds();
-    while(TIM_GetMicroseconds() <= currentCount + delay)
+    uint32_t current = 0;
+    uint32_t start = TIM_GetMicroseconds();
+    do
     {
-        // do nothing
-    }
+        current = TIM_GetMicroseconds();
+    } while (current - start < delay);
+    
 }
 
 /* USER CODE END 1 */

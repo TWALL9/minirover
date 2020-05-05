@@ -18,21 +18,21 @@ void hc_sr04_Init(hc_sr04_t *handle)
     handle->responseTimer = 0;
 }
 
-float hc_sr04_Read(hc_sr04_t *handle)
+uint16_t hc_sr04_Read(hc_sr04_t *handle, uint16_t maxDelay)
 {
+    static uint32_t start = 0;
+
     switch (handle->state)
     {
         case(IDLE):
         case(COMPLETE):
         {
-            // Ensure pin is reset before triggering
-            HAL_GPIO_WritePin(handle->trigPin.port, handle->trigPin.pin, GPIO_PIN_RESET);
-            TIM_MicrosecondDelay(2);
-
             HAL_GPIO_WritePin(handle->trigPin.port, handle->trigPin.pin, GPIO_PIN_SET);
             TIM_MicrosecondDelay(10);
             HAL_GPIO_WritePin(handle->trigPin.port, handle->trigPin.pin, GPIO_PIN_RESET);
             
+            start = TIM_GetMilliseconds();
+
             handle->state = WAIT_FOR_RESPONSE;
             break;
         }
@@ -53,13 +53,20 @@ float hc_sr04_Read(hc_sr04_t *handle)
                 uint16_t roundTrip = TIM_GetMicroseconds() - handle->responseTimer;
                 float distance = roundTrip * CM_US_CONVERSION;
                 handle->state = COMPLETE;
-                return distance;
+                return (uint16_t)distance;
             }
             break;
         }
         default:
             break;
     }
+
+    if (TIM_GetMilliseconds() - start >= maxDelay)
+    {
+        // we've timed out.  Reset.
+        handle->state = IDLE;
+    }
+
     return 0;
 }
 

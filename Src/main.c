@@ -111,7 +111,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
 
-  HAL_TIM_Base_Start(&htim14);
+  HAL_TIM_Base_Start_IT(&htim14);
   
   MotorHandle_t backLeftMotor = 
   {
@@ -214,10 +214,10 @@ int main(void)
             backRightMotorEnc = 0;
         }
 
-        float distance = hc_sr04_Read(&ultrasonicHandle);
+        uint16_t distance = hc_sr04_Read(&ultrasonicHandle, 1000);
         if (ultrasonicHandle.state == COMPLETE)
         {
-            log_DEBUG("distance (cm): %f", distance);
+            log_DEBUG("distance (cm): %d", distance);
         }
 
         

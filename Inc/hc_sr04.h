@@ -23,12 +23,12 @@ typedef enum
     {
         GPIO_reference_t trigPin;
         GPIO_reference_t echoPin;
-        uint16_t responseTimer;
+        uint32_t responseTimer;
         UltrasonicState_t state;
 } hc_sr04_t;
 
 void hc_sr04_Init(hc_sr04_t * handle);
-float hc_sr04_Read(hc_sr04_t * handle);
+uint16_t hc_sr04_Read(hc_sr04_t *handle, uint16_t maxDelay);
 
 #ifdef __cplusplus
 }
