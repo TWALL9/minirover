@@ -1,24 +1,49 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include "hc_sr04.h"
+#include "ultrasonic.h"
 #include "main.h"
 #include "tim.h"
 
 #define CM_US_CONVERSION ((float)0.0171821)
 
-static void hc_sr04_ConfigureTrig(GPIO_reference_t *reference);
-static void hc_sr04_ConfigureEcho(GPIO_reference_t *reference);
+static void hc_sr04_ConfigureTrig(GPIO_reference_t reference);
+static void hc_sr04_ConfigureEcho(GPIO_reference_t reference);
+static void ping_ConfigureEcho(GPIO_reference_t reference);
 
-void hc_sr04_Init(hc_sr04_t *handle)
+UltrasonicHandle_t ultrasonic_Init(GPIO_reference_t trigPin, GPIO_reference_t echoPin, UltrasonicType_t type)
 {
-    hc_sr04_ConfigureTrig(&handle->trigPin);
-    hc_sr04_ConfigureEcho(&handle->echoPin);
+    switch(type)
+    {
+        case(HC_SR04):
+        {
+            hc_sr04_ConfigureTrig(trigPin);
+            hc_sr04_ConfigureEcho(echoPin);
+            break;
+        }
+        case(PING):
+        {
+            // trigger configuration shared with HC-SR04
+            // Parallax Ping uses a shared trigger/echo pin.
+            hc_sr04_ConfigureTrig(trigPin);
+            break;
+        }
+        default:
+            break;
+    }
 
-    handle->state = IDLE;
-    handle->responseTimer = 0;
+    UltrasonicHandle_t handle = 
+    {
+        .trigPin = trigPin,
+        .echoPin = echoPin,
+        .state = IDLE,
+        .responseTimer = 0,
+        .type = type
+    };
+
+    return handle;
 }
 
-uint16_t hc_sr04_Read(hc_sr04_t *handle, uint16_t maxDelay)
+uint16_t ultrasonic_Read(UltrasonicHandle_t *handle, uint16_t maxDelay)
 {
     static uint32_t start = 0;
 
@@ -70,33 +95,41 @@ uint16_t hc_sr04_Read(hc_sr04_t *handle, uint16_t maxDelay)
     return 0;
 }
 
-static void hc_sr04_ConfigureTrig(GPIO_reference_t * reference)
+static void hc_sr04_ConfigureTrig(GPIO_reference_t reference)
 {
     // Pulldown
     // output
     GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-    HAL_GPIO_WritePin(reference->port, reference->pin, GPIO_PIN_RESET);
-
-    GPIO_InitStruct.Pin = reference->pin;
+    GPIO_InitStruct.Pin = reference.pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(reference->port, &GPIO_InitStruct);
+    HAL_GPIO_Init(reference.port, &GPIO_InitStruct);
+    HAL_GPIO_WritePin(reference.port, reference.pin, GPIO_PIN_RESET);
 }
 
-static void hc_sr04_ConfigureEcho(GPIO_reference_t *reference)
+static void hc_sr04_ConfigureEcho(GPIO_reference_t reference)
 {
     // pulldown
     // input
 
     GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-    HAL_GPIO_WritePin(reference->port, reference->pin, GPIO_PIN_RESET);
-
-    GPIO_InitStruct.Pin = reference->pin;
+    GPIO_InitStruct.Pin = reference.pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(reference->port, &GPIO_InitStruct);
+    HAL_GPIO_Init(reference.port, &GPIO_InitStruct);
+}
+
+static void ping_ConfigureEcho(GPIO_reference_t reference)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    GPIO_InitStruct.Pin = reference.pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(reference.port, &GPIO_InitStruct);
 }

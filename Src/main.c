@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include "motor.h"
 #include "log.h"
-#include "hc_sr04.h"
+#include "ultrasonic.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -172,23 +172,18 @@ int main(void)
   uint32_t msTicks = 0;
   uint8_t dutyCycle = 0;
 
-    hc_sr04_t ultrasonicHandle = 
+    GPIO_reference_t trigPin = 
     {
-        .trigPin = 
-        {
-            .port = GPIOD,
-            .pin = GPIO_PIN_14,
-        },
-        .echoPin = 
-        {
-            .port = GPIOD,
-            .pin = GPIO_PIN_15,
-        },
-        .responseTimer = 0,
-        .state = IDLE
+        .port = GPIOD,
+        .pin = GPIO_PIN_14,
+    };
+    GPIO_reference_t echoPin = 
+    {
+        .port = GPIOD,
+        .pin = GPIO_PIN_15,
     };
 
-    hc_sr04_Init(&ultrasonicHandle);
+    UltrasonicHandle_t ultrasonicHandle = ultrasonic_Init(trigPin, echoPin, HC_SR04);
   
     while (1) {
         if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) 
@@ -214,18 +209,15 @@ int main(void)
             backRightMotorEnc = 0;
         }
 
-        uint16_t distance = hc_sr04_Read(&ultrasonicHandle, 1000);
+        uint16_t distance = ultrasonic_Read(&ultrasonicHandle, 1000);
         if (ultrasonicHandle.state == COMPLETE)
         {
             log_DEBUG("distance (cm): %d", distance);
         }
-
-        
-  
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
   /* USER CODE END 3 */
 }
 
