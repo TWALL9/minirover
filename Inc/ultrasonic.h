@@ -14,7 +14,8 @@ typedef enum
     IDLE = 0,
     WAIT_FOR_RESPONSE,
     WAIT_FOR_CALC,
-    COMPLETE
+    COMPLETE,
+    MAX_STATE
 } UltrasonicState_t;
 
 typedef enum
