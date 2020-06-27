@@ -183,37 +183,49 @@ int main(void)
         .pin = GPIO_PIN_15,
     };
 
-    UltrasonicHandle_t ultrasonicHandle = ultrasonic_Init(trigPin, echoPin, HC_SR04);
-  
-    while (1) {
-        if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) 
-        {
-            dutyCycle = HAL_ADC_GetValue(&hadc1);
-            motor_SetSpeed(REAR_LEFT, dutyCycle);
-            motor_SetSpeed(REAR_RIGHT, dutyCycle);
-            motor_SetSpeed(FRONT_LEFT, dutyCycle);
-            motor_SetSpeed(FRONT_RIGHT, dutyCycle);
-          //printf("%d\n\r", dutyCycle);
-        }
-        else 
-        {
-            Error_Handler();
-        }
+    GPIO_reference_t pingPin = 
+    {
+        .port = GPIOD,
+        .pin = GPIO_PIN_13,
+    };
+    
+    UltrasonicHandle_t hcsr04Handle = ultrasonic_Init(trigPin, echoPin, HC_SR04);
+    UltrasonicHandle_t pingHandle = ultrasonic_Init(pingPin, pingPin, PING);
 
-        if (HAL_GetTick() - msTicks > 500)
-        {
-            // print the encoder speed.
-            //log_DEBUG("%d, %lu\n\r", dutyCycle, backRightMotorEnc);
-            msTicks = HAL_GetTick();
-            backLeftMotorEnc = 0;
-            backRightMotorEnc = 0;
-        }
+    while (1)
+    {
+      if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK)
+      {
+        dutyCycle = HAL_ADC_GetValue(&hadc1);
+        motor_SetSpeed(REAR_LEFT, dutyCycle);
+        motor_SetSpeed(REAR_RIGHT, dutyCycle);
+        motor_SetSpeed(FRONT_LEFT, dutyCycle);
+        motor_SetSpeed(FRONT_RIGHT, dutyCycle);
+      }
+      else
+      {
+        Error_Handler();
+      }
 
-        uint16_t distance = ultrasonic_Read(&ultrasonicHandle, 1000);
-        if (ultrasonicHandle.state == COMPLETE)
-        {
-            log_DEBUG("distance (cm): %d", distance);
-        }
+      if (HAL_GetTick() - msTicks > 500)
+      {
+        // print the encoder speed.
+        //log_DEBUG("%d, %lu", dutyCycle, backRightMotorEnc);
+        msTicks = HAL_GetTick();
+        backLeftMotorEnc = 0;
+        backRightMotorEnc = 0;
+      }
+
+      uint16_t distance = ultrasonic_Read(&hcsr04Handle, 1000);
+      uint16_t pingDistance = ultrasonic_Read(&pingHandle, 1000);
+      if (hcsr04Handle.state == COMPLETE && distance < 1000)
+      {
+        log_DEBUG("HCSR04 %d", distance);
+      }
+      if (pingHandle.state == COMPLETE && pingDistance < 1000)
+      {
+        log_DEBUG("Ping %d", pingDistance);
+      }
     }
     /* USER CODE END WHILE */
 

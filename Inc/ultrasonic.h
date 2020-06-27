@@ -29,6 +29,7 @@ typedef struct
     GPIO_reference_t trigPin;
     GPIO_reference_t echoPin;
     uint32_t responseTimer;
+    uint32_t startTimer;
     UltrasonicState_t state;
     UltrasonicType_t type;
 } UltrasonicHandle_t;

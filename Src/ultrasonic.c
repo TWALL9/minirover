@@ -67,8 +67,6 @@ uint16_t ultrasonic_Read(UltrasonicHandle_t *handle, uint16_t maxDelay)
 
 static uint16_t hc_sr04_Read(UltrasonicHandle_t *handle, uint16_t maxDelay)
 {
-    static uint32_t start = 0;
-
     switch (handle->state)
     {
         case(IDLE):
@@ -78,7 +76,7 @@ static uint16_t hc_sr04_Read(UltrasonicHandle_t *handle, uint16_t maxDelay)
             TIM_MicrosecondDelay(10);
             HAL_GPIO_WritePin(handle->trigPin.port, handle->trigPin.pin, GPIO_PIN_RESET);
             
-            start = TIM_GetMilliseconds();
+            handle->startTimer = TIM_GetMilliseconds();
 
             handle->state = WAIT_FOR_RESPONSE;
             break;
@@ -108,7 +106,7 @@ static uint16_t hc_sr04_Read(UltrasonicHandle_t *handle, uint16_t maxDelay)
             break;
     }
 
-    if (TIM_GetMilliseconds() - start >= maxDelay)
+    if (TIM_GetMilliseconds() - handle->startTimer >= maxDelay)
     {
         // we've timed out.  Reset.
         handle->state = IDLE;
@@ -119,8 +117,6 @@ static uint16_t hc_sr04_Read(UltrasonicHandle_t *handle, uint16_t maxDelay)
 
 static uint16_t ping_Read(UltrasonicHandle_t *handle, uint16_t maxDelay)
 {
-    static uint32_t start = 0;
-
     switch (handle->state)
     {
         case (IDLE):
@@ -133,7 +129,7 @@ static uint16_t ping_Read(UltrasonicHandle_t *handle, uint16_t maxDelay)
             TIM_MicrosecondDelay(10);
             HAL_GPIO_WritePin(handle->trigPin.port, handle->trigPin.pin, GPIO_PIN_RESET);
 
-            start = TIM_GetMilliseconds();
+            handle->startTimer = TIM_GetMilliseconds();
 
             // Receive ping back on same pin.  Convert to echo mode
             ultrasonic_ConfigureEcho(handle->echoPin);
@@ -166,7 +162,7 @@ static uint16_t ping_Read(UltrasonicHandle_t *handle, uint16_t maxDelay)
             break;
     }
 
-    if (TIM_GetMilliseconds() - start >= maxDelay)
+    if (TIM_GetMilliseconds() - handle->startTimer >= maxDelay)
     {
         // we've timed out.  Reset.
         handle->state = IDLE;
