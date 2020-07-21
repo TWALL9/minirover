@@ -25,35 +25,17 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
-/* USER CODE BEGIN Includes */
 #include <stdint.h>
 #include <stdbool.h>
-/* USER CODE END Includes */
 
 extern UART_HandleTypeDef huart2;
 
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
-
 void MX_USART2_UART_Init(void);
-
-/* USER CODE BEGIN Prototypes */
 bool USART2_PrintBuffer(uint8_t * buffer, uint16_t len);
-/* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
 #endif /*__ usart_H */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

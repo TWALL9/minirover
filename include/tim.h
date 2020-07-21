@@ -26,18 +26,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim14;
-
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
 
 void MX_TIM2_Init(void);
 void MX_TIM3_Init(void);
@@ -45,8 +37,7 @@ void MX_TIM4_Init(void);
 void MX_TIM14_Init(void);
                         
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-                                                            
-/* USER CODE BEGIN Prototypes */
+
 TIM_HandleTypeDef * HAL_TIM_GetHandleTypeDef_TIM3(void);
 uint32_t PWM_SetDutyCycle(TIM_HandleTypeDef *timerHandle, uint32_t channel, uint8_t dutyCycle);
 
@@ -55,19 +46,10 @@ uint32_t TIM_GetMilliseconds(void);
 
 uint32_t TIM_GetMicroseconds(void);
 void TIM_MicrosecondDelay(uint16_t delay);
-/* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
 #endif /*__ tim_H */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

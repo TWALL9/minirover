@@ -30,36 +30,15 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
 /* Exported types ------------------------------------------------------------*/
-/* USER CODE BEGIN ET */
 typedef struct
 {
     GPIO_TypeDef * port;
     uint16_t pin;
 } GPIO_reference_t;
-/* USER CODE END ET */
-
-/* Exported constants --------------------------------------------------------*/
-/* USER CODE BEGIN EC */
-
-/* USER CODE END EC */
-
-/* Exported macro ------------------------------------------------------------*/
-/* USER CODE BEGIN EM */
-
-/* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
-
-/* USER CODE BEGIN EFP */
-
-/* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
 #define PC14_OSC32_IN_Pin GPIO_PIN_14
@@ -112,9 +91,6 @@ void Error_Handler(void);
 #define FL_MOTOR_1_GPIO_Port GPIOB
 #define FL_MOTOR_2_Pin GPIO_PIN_8
 #define FL_MOTOR_2_GPIO_Port GPIOB
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
