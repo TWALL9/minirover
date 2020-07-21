@@ -5,7 +5,7 @@ Otomo is the silly name I came up with for a robot that would mow my lawn automa
 
 The focus of this system (for now) is to use the STMicroelectronics STM32F4 Discovery board (because I had one lying around) and a DFRobot Baron chassis.  I don't recommend the Baron.  If you are going to make a robot, do it from scratch.  I just didn't have the tools to make a proper chassis.
 
-Since this is a from-the-ground-up process for learning how to do things properly: from programming practices to hardware and beyond, expect lots of problems and issues.  
+Since this is a from-the-ground-up process for learning how to do things properly: from programming practices to hardware and beyond, expect lots of problems and issues.
 
 **// todo**
 - [x] figure out if all 8 motor outputs are PWM (YES).
@@ -18,24 +18,22 @@ Since this is a from-the-ground-up process for learning how to do things properl
 - [ ] external sensors
 	- Accelerometer/Gyro first (use the onboard gyro from the Discovery, and an accelerometer I've had lying around for years.)
 	- Distance: Ultrasonic, LIDAR.
+- [x] Remove dependency on ST Eclipse tools
+    - Move to platformIO
+    - Keep CubeMX code generator as it's handy
 
 **// external design decisions**
 * abstraction
-	* GPIO
-		* direct motor control/PID
-	* ADC
-		* Sensor values
 	* Specific comms
 		* Peripheral control
 	* After all of above
 		* Robot control
-* tons of interrupts vs poll for stuff.
-	* depends on NVIC priorities
 * Need for RTOS
 	* once we start adding external peripherals like gps then we'll need the RTOS
 	* RTOS needed once we start needing to filter enough information that a cooperative system isn't going to work
 	* or if timing specific communication is necessary.
 * HAL vs roll-own - Use HAL until I need to make my own hardware
-	* HAL's initTypeDef structures and enums are very useful
-	* Need HAL for SysTick and other happy peripherals
-	* Would have to roll my own IRQ handlers...yikes
+    * Use CubeMX for now, maybe refactor to libopencm3 at some point in the distant future
+	~~* HAL's initTypeDef structures and enums are very useful~~
+	~~* Need HAL for SysTick and other happy peripherals~~
+	~~* Would have to roll my own IRQ handlers...yikes~~

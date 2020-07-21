@@ -35,6 +35,8 @@
 *.elf.launch
 /Debug/
 
-#truestudio stuff
-.settings/
-_FLASH.ld
+# PlatformIO stuff
+.pio/build/
+.pio/libdeps
+.vscode/
+
