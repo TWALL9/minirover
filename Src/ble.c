@@ -9,7 +9,9 @@
 const char * atPrefix = "AT+";
 const char * atSuccess = "OK";
 
-BluetoothHandle_t ble_Setup(UART_HandleTypeDef * huart)
+static BluetoothHandle_t handle = {};
+
+void ble_Setup(UART_HandleTypeDef * huart)
 {
     // Set UART peripheral to HC06 defaults
     huart->Init.BaudRate = 9600;
@@ -19,14 +21,11 @@ BluetoothHandle_t ble_Setup(UART_HandleTypeDef * huart)
     huart->Init.Mode = UART_MODE_TX_RX;
     huart->Init.HwFlowCtl = UART_HWCONTROL_NONE;
 
-    BluetoothHandle_t handle = {};
-    memcpy(handle.uart, huart, sizeof(huart));
+    memcpy(handle.uart, huart, sizeof(UART_HandleTypeDef));
     handle.parity = NONE;
     handle.baud = BAUD4;
     handle.PIN = 1234;
     strcpy(handle.name, "linvor");
-
-    return handle;
 }
 
 bool ble_SetPIN(uint32_t pin)
@@ -41,5 +40,5 @@ bool ble_SetBaud(BaudRates_t baud)
 
 void ble_Transmit(char * buffer, uint16_t length)
 {
-    
+
 }

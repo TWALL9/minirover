@@ -42,7 +42,7 @@ typedef struct
 } BluetoothHandle_t;
 
 
-BluetoothHandle_t ble_Setup(UART_HandleTypeDef * huart);
+void ble_Setup(UART_HandleTypeDef * huart);
 bool ble_SetName(char * name);
 bool ble_SetPIN(uint32_t pin);
 bool ble_SetBaud(BaudRates_t baud);
