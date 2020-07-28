@@ -20,8 +20,15 @@ typedef enum
     LOG_FATAL
 } LogLevel_t;
 
+typedef enum
+{
+    UART_TTL = 0,
+    BLUETOOTH,
+} LogOutput_t;
+
 void log_Init(void);
 void log_SetEnable(bool enable);
+void log_SetOutput(LogOutput_t output);
 void log_SetLevel(LogLevel_t level);
 void log_SetColours(bool enable);
 
