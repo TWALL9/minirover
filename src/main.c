@@ -9,7 +9,6 @@
 #include "motor.h"
 #include "log.h"
 #include "ultrasonic.h"
-#include "include/FreeRTOS.h"
 
 /* Private variables ---------------------------------------------------------*/
 uint32_t backLeftMotorEnc = 0;

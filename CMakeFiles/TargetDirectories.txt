@@ -1,0 +1,3 @@
+/home/tom/otwomo/CMakeFiles/rebuild_cache.dir
+/home/tom/otwomo/CMakeFiles/edit_cache.dir
+/home/tom/otwomo/CMakeFiles/stm32_hal.dir
