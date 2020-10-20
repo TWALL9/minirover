@@ -15,12 +15,24 @@ Since this is a from-the-ground-up process for learning how to do things properl
 	- PID loop
 	- Kalman filter for speed/positional control (accel/gyro)
 	- Find some working encoders
+    	- The encoders that come with the Baron are *awful* but if you simply check for the logical 
+		level every time they interrupt, they can work for very, *very* rough speed value.
 - [ ] external sensors
 	- Accelerometer/Gyro first (use the onboard gyro from the Discovery, and an accelerometer I've had lying around for years.)
 	- Distance: Ultrasonic, LIDAR.
 - [x] Remove dependency on ST Eclipse tools
-    - Move to platformIO
+    - ~~Move to platformIO~~
+    - Move instead to a generic Makefile-derived system.
     - Keep CubeMX code generator as it's handy
+- [ ] IMU (BNO055)
+    - use for input source for speed and heading
+    - sensor fusion with the encoders?
+- [X] Ultrasonic sensors (HC-SR04/Parallax PING)
+    - Use for general distance measurements
+    - use an array of the things for obstacle avoidance
+- [ ] External interface
+    - Bluetooth or WiFi?  It would be UART regardless, either with a Bluetooth dongle or ESP-series micro
+    - Potential for Raspberry Pi onboard later?
 
 **// external design decisions**
 * abstraction
@@ -33,7 +45,8 @@ Since this is a from-the-ground-up process for learning how to do things properl
 	* RTOS needed once we start needing to filter enough information that a cooperative system isn't going to work
 	* or if timing specific communication is necessary.
 * HAL vs roll-own - Use HAL until I need to make my own hardware
-    * Use CubeMX for now, maybe refactor to libopencm3 at some point in the distant future
+    * ~~Use CubeMX for now, maybe refactor to libopencm3 at some point in the distant future~~
+      * NOTE: Work in progress
 	~~* HAL's initTypeDef structures and enums are very useful~~
 	~~* Need HAL for SysTick and other happy peripherals~~
 	~~* Would have to roll my own IRQ handlers...yikes~~

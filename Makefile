@@ -1,8 +1,8 @@
-# # Be silent per default, but 'make V=1' will show all compiler calls.
-# ifneq ($(V),1)
-# Q		:= @
-# NULL		:= 2>/dev/null
-# endif
+#################################################################################
+# Example modified from Warren Gay's opencm3 implementation for the Bluepill   	#
+# of which rules were modified from the original libopencm3 makefiles.			#
+# https://github.com/ve3wwg/stm32f103c8t6 for original implementation			#
+#################################################################################
 
 .PHONY = libopencm3 clean all
 
