@@ -41,7 +41,7 @@ main(void) {
 		for (i = 0; i < 1500000; i++)	/* Wait a bit. */
 			__asm__("nop");
 
-		gpio_set(GPIOC,GPIO13);		/* LED off */
+		gpio_set(GPIOD,GPIO13);		/* LED off */
 		for (i = 0; i < 500000; i++)	/* Wait a bit. */
 			__asm__("nop");
 	}
