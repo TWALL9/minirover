@@ -12,7 +12,9 @@ DEFS		+= -DSTM32F4
 
 TOP_DIR 	:= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 OPENCM3_DIR 	:= $(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/libopencm3)
-SRCFILES = $(TOP_DIR)/src/main.cpp
+
+SRCFILES = $(TOP_DIR)/src/*.cpp
+SRCFILES += $(TOP_DIR)/src/*.c
 
 # Modifications from original STM32F1 implementation
 # Change from Cortex M3 to M4 with hardware floating point
@@ -46,7 +48,7 @@ TGT_CFLAGS	+= $(ARCH_FLAGS)
 TGT_CFLAGS	+= -Wextra -Wshadow -Wimplicit-function-declaration
 TGT_CFLAGS	+= -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes
 TGT_CFLAGS	+= -fno-common -ffunction-sections -fdata-sections
-TGT_CFLAGS  += -I$(TOP_DIR)/include
+TGT_CFLAGS  += -I$(TOP_DIR)/inc
 TGT_CFLAGS	+= -I$(OPENCM3_DIR)/include
 #TGT_CFLAGS	+= -I$(TOP_DIR)/rtos/libwwg/include
 
@@ -58,7 +60,7 @@ TGT_CXXFLAGS	+= -fno-common -ffunction-sections -fdata-sections
 TGT_CPPFLAGS	+= -MD
 TGT_CPPFLAGS	+= -Wall -Wundef
 TGT_CPPFLAGS	+= $(DEFS)
-TGT_CPPFLAGS  += -I$(TOP_DIR)/include
+TGT_CPPFLAGS  	+= -I$(TOP_DIR)/inc
 TGT_CPPFLAGS	+= -I$(OPENCM3_DIR)/include
 #TGT_CPPFLAGS	+= -I$(TOP_DIR)/rtos/libwwg/include
 
