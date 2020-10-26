@@ -12,9 +12,10 @@ DEFS		+= -DSTM32F4
 
 TOP_DIR 	:= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 OPENCM3_DIR 	:= $(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/libopencm3)
+SRC_DIRS ?= $(TOP_DIR)/src
 
-SRCFILES = $(TOP_DIR)/src/*.cpp
-SRCFILES += $(TOP_DIR)/src/*.c
+SRCFILES := $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)
+OBJS := $(addsuffix .o, $(basename $(SRCFILES)))
 
 # Modifications from original STM32F1 implementation
 # Change from Cortex M3 to M4 with hardware floating point
@@ -37,10 +38,6 @@ STFLASH		= $(shell which st-flash)
 OPT		:= -Os -g
 DEBUG		:= -ggdb3
 CSTD		?= -std=c99
-
-TEMP1 		= $(patsubst %.c,%.o,$(SRCFILES))
-TEMP2		= $(patsubst %.asm,%.o,$(TEMP1))
-OBJS 		= $(patsubst %.cpp,%.o,$(TEMP2))
 
 LDSCRIPT	?= $(TOP_DIR)/stm32f4-discovery.ld
 TGT_CFLAGS	+= $(OPT) $(CSTD)

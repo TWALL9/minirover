@@ -1,50 +1,64 @@
-/*
- * This file is part of the libopencm3 project.
- *
- * Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
- *
- * This library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library.  If not, see <http://www.gnu.org/licenses/>.
- */
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/timer.h>
+#include <libopencm3/cm3/nvic.h>
 
-static void
-gpio_setup(void) {
-
-	rcc_clock_setup_pll(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
-
-	/* LEDS on discovery board */
-	rcc_periph_clock_enable(RCC_GPIOD);
-	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT,
-			GPIO_PUPD_NONE, GPIO12 | GPIO13 | GPIO14 | GPIO15);
+static void clock_setup(void) 
+{
+    rcc_clock_setup_pll(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
+    rcc_periph_clock_enable(RCC_TIM2);
+    rcc_periph_reset_pulse(RST_TIM2);
 }
 
-int
-main(void) {
-	int i;
+static void timer_setup(void)
+{
+    /**
+     * Motor PWM signals
+     * enable these before we instantiate the motors
+     */
+    /* Timer global mode:
+	 * - No divider
+	 * - Alignment edge
+	 * - Direction up
+	 * (These are actually default values after reset above, so this call
+	 * is strictly unnecessary, but demos the api for alternative settings)
+	 */
+	timer_set_mode(TIM2, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
+    timer_set_prescaler(TIM2, 84);
+    timer_set_period(TIM2, 999);
+    timer_enable_oc_output(TIM2, TIM_OC3);
+    timer_enable_oc_output(TIM2, TIM_OC4);
+    timer_set_oc_mode(TIM2, TIM_OC3, TIM_OCM_PWM1);
+    timer_set_oc_mode(TIM2, TIM_OC4, TIM_OCM_PWM1);
+    timer_enable_counter(TIM2);
+    
+}
 
-	gpio_setup();
+static void gpio_setup(void) 
+{
+    /* LEDS on discovery board */
+    rcc_periph_clock_enable(RCC_GPIOD);
+    gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT,
+            GPIO_PUPD_NONE, GPIO12 | GPIO13 | GPIO14 | GPIO15);
+    gpio_clear(GPIOD, GPIO12 | GPIO13 | GPIO14 | GPIO15);
 
-	for (;;) {
-		gpio_clear(GPIOD,GPIO13);	/* LED on */
-		for (i = 0; i < 1500000; i++)	/* Wait a bit. */
-			__asm__("nop");
+    /* Motor PWM outputs */
+    rcc_periph_clock_enable(RCC_GPIOB);
+    gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLDOWN, GPIO10 | GPIO11);
+    gpio_clear(GPIOB, GPIO10 | GPIO11);
+    /* AF1 is timer 2 channel 2/3 output for pin 10 and 11 */
+    gpio_set_af(GPIOB, GPIO_AF1, GPIO10 | GPIO11);
+}
 
-		gpio_set(GPIOD,GPIO13);		/* LED off */
-		for (i = 0; i < 500000; i++)	/* Wait a bit. */
-			__asm__("nop");
-	}
+int main(void) 
+{
+    clock_setup();
+    timer_setup();
+    gpio_setup();
 
-	return 0;
+    for (;;) {
+
+    }
+
+    return 0;
 }
