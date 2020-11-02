@@ -2,6 +2,7 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/timer.h>
 #include <libopencm3/stm32/usart.h>
+#include "log.h"
 
 static void clock_setup(void) 
 {
@@ -121,6 +122,9 @@ int main(void)
 	const uint32_t pulse = 1000/3;
 	
 	timer_set_oc_value(TIM2, TIM_OC3, pulse);
+
+    log_Init(USART2);
+    log_SetEnable(true);
 
     for (;;) {
 
