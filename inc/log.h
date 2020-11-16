@@ -19,17 +19,17 @@ typedef enum
     LOG_FATAL
 } LogLevel_t;
 
-void log_Init(uint32_t usart_periph);
-void log_SetEnable(bool enable);
-void log_SetLevel(LogLevel_t level);
+void log_init(uint32_t usart_periph);
+void log_set_enable(bool enable);
+void log_set_level(LogLevel_t level);
 
-#define DEBUG(...) log_Log(LOG_DEBUG, __VA_ARGS__)
-#define INFO(...)  log_Log(LOG_INFO, __VA_ARGS__)
-#define WARN(...)  log_Log(LOG_WARN, __VA_ARGS__)
-#define ERROR(...) log_Log(LOG_ERROR, __VA_ARGS__)
-#define FATAL(...) log_Log(LOG_FATAL, __VA_ARGS__)
+#define DEBUG(...) log_log(LOG_DEBUG, __VA_ARGS__)
+#define INFO(...)  log_log(LOG_INFO, __VA_ARGS__)
+#define WARN(...)  log_log(LOG_WARN, __VA_ARGS__)
+#define ERROR(...) log_log(LOG_ERROR, __VA_ARGS__)
+#define FATAL(...) log_log(LOG_FATAL, __VA_ARGS__)
 
-void log_Log(LogLevel_t level, const char * fmt, ...);
+void log_log(LogLevel_t level, const char * fmt, ...);
 
 #ifdef __cplusplus
 }

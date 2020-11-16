@@ -141,7 +141,8 @@ clean:
 
 # Flash Device
 flash:	$(BINARY).bin
-	$(STFLASH) $(FLASHSIZE) write $(BINARY).bin 0x8000000
+	# $(STFLASH) $(FLASHSIZE) write $(BINARY).bin 0x8000000
+	$(STFLASH) write $(BINARY).bin 0x8000000
 
 .PHONY: images clean elf bin hex srec list all
 

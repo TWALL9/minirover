@@ -13,32 +13,32 @@ static struct
     uint32_t periph;
     LogLevel_t level;
     bool enable;
-}log;
+}log_context;
 
 const char * level_strings[] =
 {
     "[DEBUG]: ", "[INFO]: ", "[WARN]: ", "[ERROR]: ", "[FATAL]: "
 };
 
-void log_Init(uint32_t usart_periph)
+void log_init(uint32_t usart_periph)
 {
-    memset(&log, 0, sizeof(log));
-    log.periph = usart_periph;
+    memset(&log_context, 0, sizeof(log_context));
+    log_context.periph = usart_periph;
 }
 
-void log_SetLevel(LogLevel_t level)
+void log_set_level(LogLevel_t level)
 {
-    log.level = level;
+    log_context.level = level;
 }
 
-void log_SetEnable(bool enable)
+void log_set_enable(bool enable)
 {
-    log.enable = enable;
+    log_context.enable = enable;
 }
 
-void log_Log(LogLevel_t level, const char *fmt, ...)
+void log_log(LogLevel_t level, const char *fmt, ...)
 {
-    if (level < log.level || log.enable == false)
+    if (level < log_context.level || log_context.enable == false)
     {
         return;
     }
@@ -58,13 +58,13 @@ void log_Log(LogLevel_t level, const char *fmt, ...)
     {
         for (uint8_t i = 0; i < len; i ++)
         {
-            usart_send(log.periph, buf[i]);
+            usart_send(log_context.periph, buf[i]);
         }
-        usart_send(log.periph, '\r');
-        usart_send(log.periph, '\n');
+        usart_send(log_context.periph, '\r');
+        usart_send(log_context.periph, '\n');
             
     }
-    
+
     va_end(args);
 }
 

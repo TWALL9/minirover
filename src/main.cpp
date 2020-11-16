@@ -1,8 +1,11 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
-#include <libopencm3/stm32/timer.h>
 #include <libopencm3/stm32/usart.h>
+#include <libopencm3/cm3/nvic.h>
+#include <libopencm3/cm3/systick.h>
+#include <timer.h>
 #include "log.h"
+#include "ultrasonic.h"
 
 static void clock_setup(void) 
 {
@@ -13,6 +16,8 @@ static void clock_setup(void)
     rcc_periph_reset_pulse(RST_TIM3);
 	rcc_periph_clock_enable(RCC_TIM4);
     rcc_periph_reset_pulse(RST_TIM4);
+    rcc_periph_clock_enable(RCC_TIM14);
+    rcc_periph_reset_pulse(RST_TIM14);
 
 	rcc_periph_clock_enable(RCC_USART2);
 }
@@ -27,6 +32,7 @@ static void timer_setup(void)
 	 * Alignment edge
 	 * Direction up
 	 * Prescaler 84 and period 999 allows for 0-1000 value for PWM duty cycle
+     * Does this mean that there's a 1ms overflow?
 	 */
 	timer_set_mode(TIM2, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
     timer_set_prescaler(TIM2, 84);
@@ -58,6 +64,23 @@ static void timer_setup(void)
     timer_set_oc_mode(TIM4, TIM_OC2, TIM_OCM_PWM1);
     timer_set_oc_mode(TIM4, TIM_OC3, TIM_OCM_PWM1);
     timer_enable_counter(TIM4);
+
+    // Microsecond timer for ultrasonic sensors
+    timer_set_mode(TIM14, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
+    timer_set_prescaler(TIM14, 84);
+    timer_set_period(TIM14, 1000);
+    timer_enable_counter(TIM14);
+}
+
+/* Set up a timer to create 1mS ticks. */
+static void systick_setup(void)
+{
+	/* clock rate / 1000 to get 1mS interrupt rate */
+	systick_set_reload(168000);
+	systick_set_clocksource(STK_CSR_CLKSOURCE_AHB);
+	systick_counter_enable();
+	/* this done last */
+	systick_interrupt_enable();
 }
 
 static void usart_setup(void)
@@ -116,6 +139,7 @@ int main(void)
 {
     clock_setup();
     timer_setup();
+    systick_setup();
 	usart_setup();
     gpio_setup();
 
@@ -123,11 +147,13 @@ int main(void)
 	
 	timer_set_oc_value(TIM2, TIM_OC3, pulse);
 
-    log_Init(USART2);
-    log_SetEnable(true);
+    log_init(USART2);
+    log_set_enable(true);
 
     for (;;) {
-
+        timer_delay_us(100000);
+        uint32_t systick = timer_get_system_ms();
+        DEBUG("%d", systick);
     }
 
     return 0;
