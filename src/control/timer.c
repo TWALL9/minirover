@@ -16,14 +16,21 @@ void sys_tick_handler(void)
 /**
  * delay uses timer 14 due to it not being used/modified by anyone else
  */ 
-void timer_delay_us(uint32_t period)
+void timer_delay_us(uint16_t period)
+{
+    timer_set_counter(TIM14, 0);
+    while(timer_get_counter(TIM14) < period);
+}
+
+void timer_delay_ms(uint32_t period)
 {
     uint32_t current = 0;
-    uint32_t start = timer_get_counter(TIM14);
+    uint32_t start = timer_get_system_ms();
     do
     {
-        current = timer_get_counter(TIM14);
+        current = timer_get_system_ms();
     } while (current - start <= period);
+    
 }
 
 uint16_t timer_get_system_ms(void)

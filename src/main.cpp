@@ -11,13 +11,9 @@ static void clock_setup(void)
 {
     rcc_clock_setup_pll(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
     rcc_periph_clock_enable(RCC_TIM2);
-    rcc_periph_reset_pulse(RST_TIM2);
 	rcc_periph_clock_enable(RCC_TIM3);
-    rcc_periph_reset_pulse(RST_TIM3);
 	rcc_periph_clock_enable(RCC_TIM4);
-    rcc_periph_reset_pulse(RST_TIM4);
     rcc_periph_clock_enable(RCC_TIM14);
-    rcc_periph_reset_pulse(RST_TIM14);
 
 	rcc_periph_clock_enable(RCC_USART2);
 }
@@ -36,6 +32,8 @@ static void timer_setup(void)
 	 */
 	timer_set_mode(TIM2, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
     timer_set_prescaler(TIM2, 84);
+    timer_disable_preload(TIM2);
+    timer_continuous_mode(TIM2);
     timer_set_period(TIM2, 999);
     timer_enable_oc_output(TIM2, TIM_OC3);
     timer_enable_oc_output(TIM2, TIM_OC4);
@@ -67,8 +65,9 @@ static void timer_setup(void)
 
     // Microsecond timer for ultrasonic sensors
     timer_set_mode(TIM14, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
-    timer_set_prescaler(TIM14, 84);
-    timer_set_period(TIM14, 1000);
+    timer_set_prescaler(TIM14, 84 - 1); // TIM14 gets 84 MHz clock, so set prescaler to 84 - 1 to get 1Mhz count
+    timer_set_period(TIM14, 999); // maximum counter value
+    timer_continuous_mode(TIM14);
     timer_enable_counter(TIM14);
 }
 
@@ -151,9 +150,10 @@ int main(void)
     log_set_enable(true);
 
     for (;;) {
-        timer_delay_us(100000);
-        uint32_t systick = timer_get_system_ms();
-        DEBUG("%d", systick);
+        timer_delay_us(500);
+        gpio_toggle(GPIOD, GPIO13);
+        // uint32_t systick = timer_get_system_ms();
+        //DEBUG("%d", systick);
     }
 
     return 0;
