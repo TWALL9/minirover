@@ -8,12 +8,12 @@
 
 #define CM_US_CONVERSION ((float)0.0171821)
 
-UltrasonicSensor::UltrasonicSensor(gpio_reference_t trig_pin, gpio_reference_t echo_pin, uint32_t start_timer, uint32_t response_timer)
+UltrasonicSensor::UltrasonicSensor(gpio_reference_t trig_pin, gpio_reference_t echo_pin)
 {
     trig = trig_pin;
     echo = echo_pin;
-    start_timer = start_timer;
-    echo_timer = response_timer;
+    start_timer = 0;
+    echo_timer = 0;
     state = IDLE;
     configure_trig();
     configure_echo();

@@ -8,6 +8,11 @@
 #include "log.h"
 #include "ultrasonic.h"
 
+#define GREEN GPIO12
+#define ORANGE GPIO13
+#define RED GPIO14
+#define BLUE GPIO15
+
 static void clock_setup(void) 
 {
     rcc_clock_setup_pll(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
@@ -40,8 +45,8 @@ static void gpio_setup(void)
 
     /* LEDS on discovery board */
     gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT,
-            GPIO_PUPD_NONE, GPIO12 | GPIO13 | GPIO14 | GPIO15);
-    gpio_clear(GPIOD, GPIO12 | GPIO13 | GPIO14 | GPIO15);
+            GPIO_PUPD_NONE, GREEN | ORANGE | RED | BLUE);
+    gpio_clear(GPIOD, GREEN | ORANGE | RED | BLUE);
 
     /* Motor PWM outputs */
     gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLDOWN, 
@@ -78,12 +83,53 @@ int main(void)
 	timer_set_oc_value(TIM2, TIM_OC3, pulse);
 
     log_init();
+    gpio_reference_t trig = 
+    {
+        .port = GPIOD,
+        .pins = GPIO9
+    };
 
-    for (;;) {
-        delay_us(0xFFFE);
-        gpio_toggle(GPIOD, GPIO13);
-        uint32_t d = timer_get_system_ms();
-        DEBUG("%d", d);
+    gpio_reference_t echo = 
+    {
+        .port = GPIOD,
+        .pins = GPIO10
+    };
+
+    UltrasonicSensor us = UltrasonicSensor(trig, echo);
+    float distance = 0.0;
+
+    for (;;) 
+    {
+        ultrasonic_state_t us_state = us.read(&distance, 1000);
+        switch (us_state)
+        {
+            case COMPLETE:
+            {
+                gpio_clear(GPIOD, GREEN | ORANGE | RED | BLUE);
+                gpio_set(GPIOD, ORANGE);
+                //DEBUG("%f", distance);
+                //delay_ms(1000);
+                break;
+            }
+            case IDLE:
+            {
+                gpio_clear(GPIOD, GREEN | ORANGE | RED | BLUE);
+                gpio_set(GPIOD, GREEN);
+                break;
+            }
+            case WAIT_FOR_RESPONSE:
+            {
+                gpio_clear(GPIOD, GREEN | ORANGE | RED | BLUE);
+                gpio_set(GPIOD, RED);
+                break;
+            }
+            case WAIT_FOR_CALC:
+            {
+                gpio_clear(GPIOD, GREEN | ORANGE | RED | BLUE);
+                gpio_set(GPIOD, BLUE);
+                break;
+            }
+        }
     }
 
     return 0;

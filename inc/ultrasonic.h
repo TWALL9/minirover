@@ -17,7 +17,7 @@ typedef enum
 class UltrasonicSensor 
 {
     public:
-        UltrasonicSensor(gpio_reference_t trig_pin, gpio_reference_t echo_pin, uint32_t start_timer, uint32_t response_timer);
+        UltrasonicSensor(gpio_reference_t trig_pin, gpio_reference_t echo_pin);
         ultrasonic_state_t read(float * distance, uint16_t max_delay);
     
     protected:
