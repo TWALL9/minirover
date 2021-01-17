@@ -5,6 +5,7 @@
 #include "timer.h"
 #include "delay.h"
 #include "usart.h"
+#include "gpio.h"
 #include "log.h"
 #include "ultrasonic.h"
 
@@ -83,19 +84,8 @@ int main(void)
 	timer_set_oc_value(TIM2, TIM_OC3, pulse);
 
     log_init();
-    gpio_reference_t trig = 
-    {
-        .port = GPIOD,
-        .pins = GPIO9
-    };
-
-    gpio_reference_t echo = 
-    {
-        .port = GPIOD,
-        .pins = GPIO10
-    };
-
-    UltrasonicSensor us = UltrasonicSensor(trig, echo);
+    
+    UltrasonicSensor us = UltrasonicSensor(GPIOD, GPIO9, GPIOD, GPIO10);
     float distance = 0.0;
 
     for (;;) 

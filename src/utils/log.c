@@ -29,7 +29,7 @@ void log_set_level(LogLevel_t level)
     log_context.level = level;
 }
 
-void log(LogLevel_t level, const char *fmt, ...)
+void log_log(LogLevel_t level, const char *fmt, ...)
 {
     char buf[MAX_DEBUG_LEN] = {'0'};
 

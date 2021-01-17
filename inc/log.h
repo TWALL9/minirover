@@ -22,12 +22,12 @@ typedef enum
 void log_init(void);
 void log_set_level(LogLevel_t level);
 
-#define DEBUG(...) log(LOG_LEVEL_DEBUG, __VA_ARGS__)
-#define INFO(...)  log(LOG_LEVEL_INFO, __VA_ARGS__)
-#define WARN(...)  log(LOG_LEVEL_WARN, __VA_ARGS__)
-#define ERROR(...) log(LOG_LEVEL_ERROR, __VA_ARGS__)
+#define DEBUG(...) log_log(LOG_LEVEL_DEBUG, __VA_ARGS__)
+#define INFO(...)  log_log(LOG_LEVEL_INFO, __VA_ARGS__)
+#define WARN(...)  log_log(LOG_LEVEL_WARN, __VA_ARGS__)
+#define ERROR(...) log_log(LOG_LEVEL_ERROR, __VA_ARGS__)
 
-void log(LogLevel_t level, const char * fmt, ...);
+void log_log(LogLevel_t level, const char * fmt, ...);
 
 #ifdef __cplusplus
 }
