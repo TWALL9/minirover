@@ -4,26 +4,24 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
-#include <libopencm3/stm32/usart.h>
+#include <usart.h>
 
 #define MAX_DEBUG_LEN 64
 
 static struct
 {
-    uint32_t periph;
     LogLevel_t level;
-    bool enable;
 }log_context;
 
 const char * level_strings[] =
 {
-    "[DEBUG]: ", "[INFO]: ", "[WARN]: ", "[ERROR]: ", "[FATAL]: "
+    "[DEBUG]: ", "[INFO]: ", "[WARN]: ", "[ERROR]: "
 };
 
-void log_init(uint32_t usart_periph)
+void log_init(void)
 {
     memset(&log_context, 0, sizeof(log_context));
-    log_context.periph = usart_periph;
+    log_set_level(LOG_LEVEL_DEBUG);
 }
 
 void log_set_level(LogLevel_t level)
@@ -31,41 +29,29 @@ void log_set_level(LogLevel_t level)
     log_context.level = level;
 }
 
-void log_set_enable(bool enable)
+void log(LogLevel_t level, const char *fmt, ...)
 {
-    log_context.enable = enable;
-}
+    char buf[MAX_DEBUG_LEN] = {'0'};
 
-void log_log(LogLevel_t level, const char *fmt, ...)
-{
-    if (level < log_context.level || log_context.enable == false)
+    if (level >= log_context.level && log_context.level != LOG_LEVEL_OFF)
     {
-        return;
-    }
+        va_list args;
+        va_start(args, fmt);
 
-    char buf[MAX_DEBUG_LEN] = {0};
+        strcpy(buf, level_strings[level]);
+        
+        uint8_t remaining_size = MAX_DEBUG_LEN - strlen(buf);
+        uint8_t len = strlen(buf) + vsnprintf(&buf[strlen(buf)], remaining_size, fmt, args);
+        len = len > MAX_DEBUG_LEN ? MAX_DEBUG_LEN : len;
 
-    strcpy(buf, level_strings[level]);
-    
-    uint8_t remaining_size = MAX_DEBUG_LEN - strlen(buf);
-
-    va_list args;
-    va_start(args, fmt);
-
-    uint8_t len = vsnprintf(&buf[strlen(buf)], remaining_size, fmt, args);
-
-    if (len > 0)
-    {
-        for (uint8_t i = 0; i < len; i ++)
+        if (len > 0)
         {
-            usart_send(log_context.periph, buf[i]);
+            usart_send_buf(buf, len);
+            usart_send_buf("\r\n", 2);
         }
-        usart_send(log_context.periph, '\r');
-        usart_send(log_context.periph, '\n');
-            
-    }
 
-    va_end(args);
+        va_end(args);
+    }
 }
 
 // TODO: Add queue to add debugs to, so that they may be dumped out the uart when ready (or over AT protocol)

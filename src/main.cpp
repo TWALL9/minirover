@@ -1,9 +1,10 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
-#include <libopencm3/stm32/usart.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/cm3/systick.h>
-#include <timer.h>
+#include "timer.h"
+#include "delay.h"
+#include "usart.h"
 #include "log.h"
 #include "ultrasonic.h"
 
@@ -18,59 +19,6 @@ static void clock_setup(void)
 	rcc_periph_clock_enable(RCC_USART2);
 }
 
-static void timer_setup(void)
-{
-    /**
-     * Motor PWM signals
-     * enable these before we instantiate the motors
-     * Timer global mode:
-	 * No divider
-	 * Alignment edge
-	 * Direction up
-	 * Prescaler 84 and period 999 allows for 0-1000 value for PWM duty cycle
-     * Does this mean that there's a 1ms overflow?
-	 */
-	timer_set_mode(TIM2, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
-    timer_set_prescaler(TIM2, 84);
-    timer_disable_preload(TIM2);
-    timer_continuous_mode(TIM2);
-    timer_set_period(TIM2, 999);
-    timer_enable_oc_output(TIM2, TIM_OC3);
-    timer_enable_oc_output(TIM2, TIM_OC4);
-    timer_set_oc_mode(TIM2, TIM_OC3, TIM_OCM_PWM1);
-    timer_set_oc_mode(TIM2, TIM_OC4, TIM_OCM_PWM1);
-    timer_enable_counter(TIM2);
-
-	timer_set_mode(TIM3, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
-    timer_set_prescaler(TIM3, 84);
-    timer_set_period(TIM3, 999);
-    timer_enable_oc_output(TIM3, TIM_OC1);
-    timer_enable_oc_output(TIM3, TIM_OC2);
-    timer_enable_oc_output(TIM3, TIM_OC3);
-    timer_enable_oc_output(TIM3, TIM_OC4);
-    timer_set_oc_mode(TIM3, TIM_OC1, TIM_OCM_PWM1);
-    timer_set_oc_mode(TIM3, TIM_OC2, TIM_OCM_PWM1);
-    timer_set_oc_mode(TIM3, TIM_OC3, TIM_OCM_PWM1);
-    timer_set_oc_mode(TIM3, TIM_OC4, TIM_OCM_PWM1);
-    timer_enable_counter(TIM3);
-
-	timer_set_mode(TIM4, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
-    timer_set_prescaler(TIM4, 84);
-    timer_set_period(TIM4, 999);
-    timer_enable_oc_output(TIM4, TIM_OC2);
-    timer_enable_oc_output(TIM4, TIM_OC3);
-    timer_set_oc_mode(TIM4, TIM_OC2, TIM_OCM_PWM1);
-    timer_set_oc_mode(TIM4, TIM_OC3, TIM_OCM_PWM1);
-    timer_enable_counter(TIM4);
-
-    // Microsecond timer for ultrasonic sensors
-    timer_set_mode(TIM14, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
-    timer_set_prescaler(TIM14, 84 - 1); // TIM14 gets 84 MHz clock, so set prescaler to 84 - 1 to get 1Mhz count
-    timer_set_period(TIM14, 999); // maximum counter value
-    timer_continuous_mode(TIM14);
-    timer_enable_counter(TIM14);
-}
-
 /* Set up a timer to create 1mS ticks. */
 static void systick_setup(void)
 {
@@ -80,18 +28,6 @@ static void systick_setup(void)
 	systick_counter_enable();
 	/* this done last */
 	systick_interrupt_enable();
-}
-
-static void usart_setup(void)
-{
-	usart_set_baudrate(USART2, 115200);
-	usart_set_databits(USART2, 8);
-	usart_set_stopbits(USART2, USART_STOPBITS_1);
-	usart_set_mode(USART2, USART_MODE_TX_RX);
-	usart_set_parity(USART2, USART_PARITY_NONE);
-	usart_set_flow_control(USART2, USART_FLOWCONTROL_NONE);
-
-	usart_enable(USART2);
 }
 
 static void gpio_setup(void) 
@@ -127,33 +63,27 @@ static void gpio_setup(void)
 			GPIO9 | GPIO10);
 	gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_PULLDOWN,
 			GPIO8 | GPIO9 | GPIO10 | GPIO13);
-	
-	/* Debug output USART */
-	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_PULLUP,
-			GPIO2 | GPIO3);
-	gpio_set_af(GPIOA, GPIO_AF7, GPIO2 | GPIO3);
 }
 
 int main(void) 
 {
     clock_setup();
-    timer_setup();
     systick_setup();
-	usart_setup();
+    timer_setup();
     gpio_setup();
+	usart_setup();
 
 	const uint32_t pulse = 1000/3;
 	
 	timer_set_oc_value(TIM2, TIM_OC3, pulse);
 
-    log_init(USART2);
-    log_set_enable(true);
+    log_init();
 
     for (;;) {
-        timer_delay_us(500);
+        delay_us(0xFFFE);
         gpio_toggle(GPIOD, GPIO13);
-        // uint32_t systick = timer_get_system_ms();
-        //DEBUG("%d", systick);
+        uint32_t d = timer_get_system_ms();
+        DEBUG("%d", d);
     }
 
     return 0;

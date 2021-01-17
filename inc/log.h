@@ -12,24 +12,22 @@ extern "C" {
 
 typedef enum 
 {
-    LOG_DEBUG = 0,
-    LOG_INFO,
-    LOG_WARN,
-    LOG_ERROR,
-    LOG_FATAL
+    LOG_LEVEL_DEBUG = 0,
+    LOG_LEVEL_INFO,
+    LOG_LEVEL_WARN,
+    LOG_LEVEL_ERROR,
+    LOG_LEVEL_OFF
 } LogLevel_t;
 
-void log_init(uint32_t usart_periph);
-void log_set_enable(bool enable);
+void log_init(void);
 void log_set_level(LogLevel_t level);
 
-#define DEBUG(...) log_log(LOG_DEBUG, __VA_ARGS__)
-#define INFO(...)  log_log(LOG_INFO, __VA_ARGS__)
-#define WARN(...)  log_log(LOG_WARN, __VA_ARGS__)
-#define ERROR(...) log_log(LOG_ERROR, __VA_ARGS__)
-#define FATAL(...) log_log(LOG_FATAL, __VA_ARGS__)
+#define DEBUG(...) log(LOG_LEVEL_DEBUG, __VA_ARGS__)
+#define INFO(...)  log(LOG_LEVEL_INFO, __VA_ARGS__)
+#define WARN(...)  log(LOG_LEVEL_WARN, __VA_ARGS__)
+#define ERROR(...) log(LOG_LEVEL_ERROR, __VA_ARGS__)
 
-void log_log(LogLevel_t level, const char * fmt, ...);
+void log(LogLevel_t level, const char * fmt, ...);
 
 #ifdef __cplusplus
 }

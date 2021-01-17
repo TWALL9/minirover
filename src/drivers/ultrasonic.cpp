@@ -4,6 +4,7 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include "timer.h"
+#include "delay.h"
 
 #define CM_US_CONVERSION ((float)0.0171821)
 
@@ -26,7 +27,7 @@ ultrasonic_state_t UltrasonicSensor::read(float * distance, uint16_t max_delay)
         case(COMPLETE):
         {
             gpio_set(trig.port, trig.pins);
-            timer_delay_us(10);
+            delay_us(10);
             gpio_clear(trig.port, trig.pins);
             
             start_timer = timer_get_system_ms();

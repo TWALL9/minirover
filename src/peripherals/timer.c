@@ -1,0 +1,81 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "timer.h"
+#include <libopencm3/cm3/nvic.h>
+#include <libopencm3/cm3/systick.h>
+
+volatile uint32_t system_ms;
+
+void timer_setup(void)
+{
+    /**
+     * Motor PWM signals
+     * enable these before we instantiate the motors
+     * Timer global mode:
+	 * No divider
+	 * Alignment edge
+	 * Direction up
+	 * Prescaler 84 and period 999 allows for 0-1000 value for PWM duty cycle
+     * Does this mean that there's a 1ms overflow?
+	 */
+	timer_set_mode(TIM2, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
+    timer_set_prescaler(TIM2, 84 - 1);
+    timer_disable_preload(TIM2);
+    timer_continuous_mode(TIM2);
+    timer_set_period(TIM2, 999);
+    timer_enable_oc_output(TIM2, TIM_OC3);
+    timer_enable_oc_output(TIM2, TIM_OC4);
+    timer_set_oc_mode(TIM2, TIM_OC3, TIM_OCM_PWM1);
+    timer_set_oc_mode(TIM2, TIM_OC4, TIM_OCM_PWM1);
+    timer_enable_counter(TIM2);
+
+	timer_set_mode(TIM3, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
+    timer_set_prescaler(TIM3, 84 - 1);
+    timer_set_period(TIM3, 999);
+    timer_enable_oc_output(TIM3, TIM_OC1);
+    timer_enable_oc_output(TIM3, TIM_OC2);
+    timer_enable_oc_output(TIM3, TIM_OC3);
+    timer_enable_oc_output(TIM3, TIM_OC4);
+    timer_set_oc_mode(TIM3, TIM_OC1, TIM_OCM_PWM1);
+    timer_set_oc_mode(TIM3, TIM_OC2, TIM_OCM_PWM1);
+    timer_set_oc_mode(TIM3, TIM_OC3, TIM_OCM_PWM1);
+    timer_set_oc_mode(TIM3, TIM_OC4, TIM_OCM_PWM1);
+    timer_enable_counter(TIM3);
+
+	timer_set_mode(TIM4, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
+    timer_set_prescaler(TIM4, 84 - 1);
+    timer_set_period(TIM4, 999);
+    timer_enable_oc_output(TIM4, TIM_OC2);
+    timer_enable_oc_output(TIM4, TIM_OC3);
+    timer_set_oc_mode(TIM4, TIM_OC2, TIM_OCM_PWM1);
+    timer_set_oc_mode(TIM4, TIM_OC3, TIM_OCM_PWM1);
+    timer_enable_counter(TIM4);
+
+    // Microsecond timer for ultrasonic sensors
+    timer_set_mode(TIM14, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
+    timer_set_prescaler(TIM14, 84 - 1); // TIM14 gets 84 MHz clock, so set prescaler to 84 - 1 to get 1Mhz count
+    timer_set_period(TIM14, 0xFFFF);
+    timer_continuous_mode(TIM14);
+    timer_enable_counter(TIM14);
+}
+
+void sys_tick_handler(void)
+{
+    system_ms++;
+}
+
+uint32_t timer_get_system_ms(void)
+{
+    return system_ms;
+}
+
+uint16_t timer_get_system_us(void)
+{
+    return (timer_get_system_ms() * 1000) + timer_get_counter(TIM2);
+}
+
+#ifdef __cplusplus
+}
+#endif
