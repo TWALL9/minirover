@@ -8,11 +8,7 @@
 #include "gpio.h"
 #include "log.h"
 #include "ultrasonic.h"
-
-#define GREEN GPIO12
-#define ORANGE GPIO13
-#define RED GPIO14
-#define BLUE GPIO15
+#include "h_bridge.h"
 
 static void clock_setup(void) 
 {
@@ -36,7 +32,7 @@ static void systick_setup(void)
 	systick_interrupt_enable();
 }
 
-static void gpio_setup(void) 
+void gpio_setup(void) 
 {
 	/* clocks */
 	rcc_periph_clock_enable(RCC_GPIOA);
@@ -46,8 +42,8 @@ static void gpio_setup(void)
 
     /* LEDS on discovery board */
     gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT,
-            GPIO_PUPD_NONE, GREEN | ORANGE | RED | BLUE);
-    gpio_clear(GPIOD, GREEN | ORANGE | RED | BLUE);
+            GPIO_PUPD_NONE, LED_GREEN | LED_ORANGE | LED_RED | LED_BLUE);
+    gpio_clear(GPIOD, LED_GREEN | LED_ORANGE | LED_RED | LED_BLUE);
 
     /* Motor PWM outputs */
     gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLDOWN, 
@@ -63,12 +59,6 @@ static void gpio_setup(void)
 			GPIO6 | GPIO7 | GPIO8 | GPIO9);
     gpio_clear(GPIOC, GPIO6 | GPIO7 | GPIO8 | GPIO9);
     gpio_set_af(GPIOC, GPIO_AF2, GPIO6 | GPIO7 | GPIO8 | GPIO9);
-
-	/* ultrasonic sensors */
-	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_PULLDOWN, 
-			GPIO9 | GPIO10);
-	gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_PULLDOWN,
-			GPIO8 | GPIO9 | GPIO10 | GPIO13);
 }
 
 int main(void) 
@@ -79,47 +69,25 @@ int main(void)
     gpio_setup();
 	usart_setup();
 
-	const uint32_t pulse = 1000/3;
+	int16_t pulse = 1000/3;
 	
-	timer_set_oc_value(TIM2, TIM_OC3, pulse);
-
-    log_init();
+	HBridge hb = HBridge(TIM2, TIM_OC3, TIM2, TIM_OC4);
+    uint8_t mode = NEUTRAL;
     
-    UltrasonicSensor us = UltrasonicSensor(GPIOD, GPIO9, GPIOD, GPIO10);
-    float distance = 0.0;
+    log_init();
 
     for (;;) 
     {
-        ultrasonic_state_t us_state = us.read(&distance, 1000);
-        switch (us_state)
+        if (mode == DRIVE)
         {
-            case COMPLETE:
-            {
-                gpio_clear(GPIOD, GREEN | ORANGE | RED | BLUE);
-                gpio_set(GPIOD, ORANGE);
-                //DEBUG("%f", distance);
-                //delay_ms(1000);
-                break;
-            }
-            case IDLE:
-            {
-                gpio_clear(GPIOD, GREEN | ORANGE | RED | BLUE);
-                gpio_set(GPIOD, GREEN);
-                break;
-            }
-            case WAIT_FOR_RESPONSE:
-            {
-                gpio_clear(GPIOD, GREEN | ORANGE | RED | BLUE);
-                gpio_set(GPIOD, RED);
-                break;
-            }
-            case WAIT_FOR_CALC:
-            {
-                gpio_clear(GPIOD, GREEN | ORANGE | RED | BLUE);
-                gpio_set(GPIOD, BLUE);
-                break;
-            }
+            pulse = pulse * -1;
         }
+        hb.set_mode((drive_mode_t)mode);
+        hb.set_duty(pulse);
+        hb.drive();
+        DEBUG("%d", mode);
+        delay_ms(1000);
+        mode = (mode == BRAKE) ? NEUTRAL : mode + 1;
     }
 
     return 0;

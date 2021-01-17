@@ -9,6 +9,9 @@ extern "C" {
 #include <stdint.h>
 
 void timer_setup(void);
+
+void timer_pwm_setup(uint32_t time_base, uint8_t channel);
+
 uint32_t timer_get_system_ms(void);
 uint16_t timer_get_system_us(void);
 
