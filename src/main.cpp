@@ -71,23 +71,28 @@ int main(void)
 
 	int16_t pulse = 1000/3;
 	
-	HBridge hb = HBridge(TIM2, TIM_OC3, TIM2, TIM_OC4);
-    uint8_t mode = NEUTRAL;
-    
+	motors::HBridge hb = motors::HBridge(TIM2, TIM_OC3, TIM2, TIM_OC4);
+    motors::drive_mode_t mode[] = {motors::NEUTRAL, motors::DRIVE, motors::BRAKE};
+    uint8_t i = 0;
+
     log_init();
 
     for (;;) 
     {
-        if (mode == DRIVE)
+        if (mode[i] == motors::DRIVE)
         {
             pulse = pulse * -1;
         }
-        hb.set_mode((drive_mode_t)mode);
-        hb.set_duty(pulse);
+        hb.set_drive_mode(mode[i]);
+        hb.set_duty_cycle(pulse);
         hb.drive();
-        DEBUG("%d", mode);
+        DEBUG("%d", (uint8_t)mode[i]);
         delay_ms(1000);
-        mode = (mode == BRAKE) ? NEUTRAL : mode + 1;
+        i++;
+        if (i > 2)
+        {
+            i = 0;
+        }
     }
 
     return 0;

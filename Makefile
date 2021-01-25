@@ -27,7 +27,7 @@ PREFIX		?= arm-none-eabi-
 
 CC		:= $(PREFIX)gcc
 CXX		:= $(PREFIX)g++
-LD		:= $(PREFIX)gcc
+LD		:= $(PREFIX)g++
 AR		:= $(PREFIX)ar
 AS		:= $(PREFIX)as
 OBJCOPY		:= $(PREFIX)objcopy
