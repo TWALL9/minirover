@@ -1,0 +1,43 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start QEMU",
+      "type": "shell",
+      "command": "tools/xpack-qemu-arm-2.8.0-12/bin/qemu-system-gnuarmeclipse \
+        --board STM32F4-Discovery \
+        --mcu STM32F407VG \
+        -d unimp,guest_errors \
+        -m size=2048 \
+        --nographic \
+        --image otomo.elf \
+        --semihosting-config enable=on,target=native \
+        --gdb tcp::3333 \
+        -S",
+      "dependsOn": ["Make (Debug)"],
+    },
+    {
+      "label": "Make (Debug)",
+      "type": "process",
+      "command": "make",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Flash device",
+      "type": "process",
+      "command": "make",
+      "args": ["flash"],
+    },
+    {
+      "label": "Make (Clean)",
+      "type": "process",
+      "command": "make",
+      "args": ["clean"],
+    },
+  ]
+}

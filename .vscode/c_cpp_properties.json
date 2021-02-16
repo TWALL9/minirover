@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/tom/otomo/inc",
+                "/home/tom/otomo/src",
+                "/home/tom/otomo/libopencm3"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/home/tom/otomo/inc",
+                    "/home/tom/otomo/src",
+                    "/home/tom/otomo/libopencm3"
+                ]
+            },
+            "intelliSenseMode": "clang-x64",
+            "compilerArgs": [
+                "-mthumb",
+                "-mcpu=cortex-m4",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}

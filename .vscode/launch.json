@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(qemu) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/otomo.elf",
+            "miDebuggerServerAddress": "localhost:3333",
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "MIMode": "gdb",
+            //"preLaunchTask": "Start QEMU",
+            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+        },
+        {
+            "name": "Debug (Device)",
+            "cwd": "${workspaceRoot}",
+            "executable": "${workspaceRoot}/otomo.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "stutil",
+            "device": "STM32F407VG",
+            "runToMain": true,
+            "preLaunchTask": "Make (Debug)",
+            "configFiles": [
+                "interface/stlink-v2.cfg",
+                "board/stm32f4discovery.cfg"
+            ],
+            "gdbPath": "/usr/bin/gdb-multiarch",
+            "armToolchainPath": "/usr/bin",
+        }
+    ]
+}

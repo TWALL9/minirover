@@ -69,7 +69,6 @@ TGT_LDFLAGS	+= -Wl,--gc-sections
 
 LDLIBS		+= -specs=nosys.specs
 LDLIBS		+= -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
-#LDLIBS		+= -L$(TOP_DIR)/rtos/libwwg -lwwg
 LDLIBS		+= -L$(OPENCM3_DIR)/lib -lopencm3_stm32f4
 
 .SUFFIXES:	.elf .bin .hex .srec .list .map .images

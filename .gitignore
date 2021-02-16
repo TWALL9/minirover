@@ -39,3 +39,6 @@
 *.bin
 *.map
 *.img
+
+# random binaries
+core
