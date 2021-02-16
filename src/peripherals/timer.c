@@ -22,7 +22,7 @@ void timer_setup(void)
     timer_pwm_setup(TIM4, TIM_OC3);
 
     // Microsecond timer for ultrasonic sensors
-    timer_set_drive_mode(TIM14, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
+    timer_set_mode(TIM14, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
     timer_set_prescaler(TIM14, 84 - 1); // TIM14 gets 84 MHz clock, so set prescaler to 84 - 1 to get 1Mhz count
     timer_set_period(TIM14, 0xFFFF);
     timer_continuous_mode(TIM14);
@@ -41,7 +41,7 @@ void timer_setup(void)
  */
 void timer_pwm_setup(uint32_t time_base, uint8_t channel)
 {
-    timer_set_drive_mode(time_base, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
+    timer_set_mode(time_base, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
     timer_set_prescaler(time_base, 84 - 1);
     timer_disable_preload(time_base);
     timer_continuous_mode(time_base);

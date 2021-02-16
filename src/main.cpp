@@ -9,6 +9,7 @@
 #include "log.h"
 #include "ultrasonic.h"
 #include "h_bridge.h"
+#include "continuous_servo.h"
 
 static void clock_setup(void) 
 {
@@ -69,29 +70,22 @@ int main(void)
     gpio_setup();
 	usart_setup();
 
-	int16_t pulse = 1000/3;
-	
-	motors::HBridge hb = motors::HBridge(TIM2, TIM_OC3, TIM2, TIM_OC4);
-    motors::drive_mode_t mode[] = {motors::NEUTRAL, motors::DRIVE, motors::BRAKE};
+	int16_t pulse[] = {-1000, -500, 0, 500, 1000};
     uint8_t i = 0;
+
+    motors::ContinuousServo cs = motors::ContinuousServo(TIM2, TIM_OC3);
+    cs.set_drive_mode(motors::DRIVE);
 
     log_init();
 
     for (;;) 
     {
-        if (mode[i] == motors::DRIVE)
+        for (i = 0; i < 5; i++)
         {
-            pulse = pulse * -1;
-        }
-        hb.set_drive_mode(mode[i]);
-        hb.set_duty_cycle(pulse);
-        hb.drive();
-        DEBUG("%d", (uint8_t)mode[i]);
-        delay_ms(1000);
-        i++;
-        if (i > 2)
-        {
-            i = 0;
+            cs.set_duty_cycle(pulse[i]);
+            cs.drive();
+            DEBUG("%d", (uint8_t)pulse[i]);
+            delay_ms(1000);
         }
     }
 

@@ -11,7 +11,7 @@ namespace motors
     class Stepper : public MotorDelegate
     {
         public:
-            Stepper(uint32_t drive_timer_base, uint8_t drive_timer_channel, uint32_t direction_port, uint16_t direction_pin);
+            Stepper(uint32_t drive_timer_base, uint32_t direction_port, uint16_t direction_pin, uint8_t drive_timer_channel);
             void drive(void);
         
         private:

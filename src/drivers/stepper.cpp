@@ -4,12 +4,12 @@
 
 namespace motors
 {
-    Stepper::Stepper(uint32_t drive_timer_base, uint8_t drive_timer_channel, uint32_t direction_port, uint16_t direction_pin)
+    Stepper::Stepper(uint32_t drive_timer_base, uint32_t direction_port, uint16_t direction_pin, uint8_t drive_timer_channel)
     :
         drive_base(drive_timer_base),
-        drive_channel(drive_timer_channel),
         dir_port(direction_port),
-        dir_pin(direction_pin)
+        dir_pin(direction_pin),
+        drive_channel(drive_timer_channel)
     {
         timer_pwm_setup(this->drive_base, (tim_oc_id)this->drive_channel);
         gpio_mode_setup(dir_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, dir_pin);
