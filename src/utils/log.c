@@ -1,10 +1,10 @@
-#include "log.h"
+#include "utils/log.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
-#include <usart.h>
+#include "peripherals/usart.h"
 
 #define MAX_DEBUG_LEN 64
 

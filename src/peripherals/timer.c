@@ -2,7 +2,7 @@
 extern "C" {
 #endif
 
-#include "timer.h"
+#include "peripherals/timer.h"
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/cm3/systick.h>
 

@@ -2,7 +2,7 @@
 extern "C" {
 #endif
 
-#include "gpio.h"
+#include "peripherals/gpio.h"
 
 bool gpio_get_pin(uint32_t gpioport, uint16_t gpios)
 {

@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "motor_delegate.h"
-#include "timer.h"
+#include "drivers/motor_delegate.h"
+#include "peripherals/timer.h"
 
 namespace motors
 {

@@ -1,6 +1,6 @@
-#include "continuous_servo.h"
-#include "gpio.h"
-#include "math.h"
+#include "drivers/continuous_servo.h"
+#include "peripherals/gpio.h"
+#include "utils/math.h"
 #include <stdlib.h>
 
 namespace motors

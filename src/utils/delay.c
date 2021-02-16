@@ -2,8 +2,8 @@
 extern "C" {
 #endif
 
-#include "timer.h"
-#include "delay.h"
+#include "peripherals/timer.h"
+#include "utils/delay.h"
 
 /**
  * delay uses timer 14 due to it not being used/modified by anyone else

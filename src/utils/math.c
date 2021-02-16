@@ -2,7 +2,7 @@
 extern "C" {
 #endif
 
-#include "math.h"
+#include "utils/math.h"
 
 int32_t rescale_range(float x, float x_min, float x_max, float y_min, float y_max)
 {

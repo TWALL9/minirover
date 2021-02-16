@@ -2,14 +2,14 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/cm3/systick.h>
-#include "timer.h"
-#include "delay.h"
-#include "usart.h"
-#include "gpio.h"
-#include "log.h"
-#include "ultrasonic.h"
-#include "h_bridge.h"
-#include "continuous_servo.h"
+#include "peripherals/timer.h"
+#include "utils/delay.h"
+#include "peripherals/usart.h"
+#include "peripherals/gpio.h"
+#include "utils/log.h"
+#include "drivers/ultrasonic.h"
+#include "drivers/h_bridge.h"
+#include "drivers/continuous_servo.h"
 
 static void clock_setup(void) 
 {

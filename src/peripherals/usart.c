@@ -2,7 +2,7 @@
 extern "C" {
 #endif
 
-#include "usart.h"
+#include "peripherals/usart.h"
 #include <libopencm3/stm32/gpio.h>
 
 void usart_setup(void)

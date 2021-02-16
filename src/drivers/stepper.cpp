@@ -1,5 +1,5 @@
-#include "stepper.h"
-#include "gpio.h"
+#include "drivers/stepper.h"
+#include "peripherals/gpio.h"
 #include <stdlib.h>
 
 namespace motors

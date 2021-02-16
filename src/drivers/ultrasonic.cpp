@@ -1,9 +1,9 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include "ultrasonic.h"
-#include "gpio.h"
-#include "timer.h"
-#include "delay.h"
+#include "drivers/ultrasonic.h"
+#include "peripherals/gpio.h"
+#include "peripherals/timer.h"
+#include "utils/delay.h"
 
 #define CM_US_CONVERSION ((float)0.0171821)
 
