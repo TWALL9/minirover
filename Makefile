@@ -37,7 +37,8 @@ GDB		:= $(PREFIX)gdb
 STFLASH		= $(shell which st-flash)
 OPT		:= -Os -g
 DEBUG		:= -ggdb3
-CSTD		?= -std=c99
+CSTD		?= -std=c11
+CXXSTD		?= -std=c++11
 
 LDSCRIPT	?= $(TOP_DIR)/stm32f4-discovery.ld
 TGT_CFLAGS	+= $(OPT) $(CSTD)

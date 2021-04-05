@@ -46,8 +46,8 @@ void log_log(LogLevel_t level, const char *fmt, ...)
 
         if (len > 0)
         {
-            usart_send_buf(buf, len);
-            usart_send_buf("\r\n", 2);
+            usart_send_buf(USART2, buf, len);
+            usart_send_buf(USART2, "\r\n", 2);
         }
 
         va_end(args);

@@ -10,6 +10,7 @@
 #include "drivers/ultrasonic.h"
 #include "drivers/h_bridge.h"
 #include "drivers/continuous_servo.h"
+#include "drivers/bluetooth.h"
 
 static void clock_setup(void) 
 {
@@ -68,7 +69,7 @@ int main(void)
     systick_setup();
     timer_setup();
     gpio_setup();
-	usart_setup();
+	usart_setup(USART2, 115200, 8, USART_STOPBITS_1, USART_MODE_TX, USART_PARITY_NONE, USART_FLOWCONTROL_NONE);
 
 	int16_t pulse[] = {-1000, -500, 0, 500, 1000};
     uint8_t i = 0;
@@ -76,17 +77,18 @@ int main(void)
     motors::ContinuousServo cs = motors::ContinuousServo(TIM2, TIM_OC3);
     cs.set_drive_mode(motors::DRIVE);
 
-    log_init();
+    //log_init();
+
+    bluetooth::HC06 b = bluetooth::HC06(USART2);
 
     for (;;) 
     {
-        for (i = 0; i < 5; i++)
-        {
-            cs.set_duty_cycle(pulse[i]);
-            cs.drive();
-            DEBUG("%d", (uint8_t)pulse[i]);
-            delay_ms(1000);
-        }
+        // DEBUG("Hey");
+        // delay_ms(1000);
+        b.start();
+        char res[10];
+        uint16_t len = b.read(res);
+        DEBUG("%s", res);
     }
 
     return 0;

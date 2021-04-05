@@ -22,8 +22,8 @@ Since this is a from-the-ground-up process for learning how to do things properl
 	- Distance: Ultrasonic, LIDAR.
 - [x] Remove dependency on ST Eclipse tools
     - ~~Move to platformIO~~
-    - Move instead to a generic Makefile-derived system.
-    - Keep CubeMX code generator as it's handy
+    - ~~Move instead to a generic Makefile-derived system.~~
+    - ~~Keep CubeMX code generator as it's handy~~
 - [ ] IMU (BNO055)
     - use for input source for speed and heading
     - sensor fusion with the encoders?
