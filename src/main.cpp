@@ -19,8 +19,6 @@ static void clock_setup(void)
 	rcc_periph_clock_enable(RCC_TIM3);
 	rcc_periph_clock_enable(RCC_TIM4);
     rcc_periph_clock_enable(RCC_TIM14);
-
-	rcc_periph_clock_enable(RCC_USART2);
 }
 
 /* Set up a timer to create 1mS ticks. */
@@ -69,7 +67,6 @@ int main(void)
     systick_setup();
     timer_setup();
     gpio_setup();
-	usart_setup(USART2, 115200, 8, USART_STOPBITS_1, USART_MODE_TX, USART_PARITY_NONE, USART_FLOWCONTROL_NONE);
 
 	int16_t pulse[] = {-1000, -500, 0, 500, 1000};
     uint8_t i = 0;

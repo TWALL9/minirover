@@ -4,6 +4,7 @@ extern "C" {
 
 #include "peripherals/usart.h"
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/rcc.h>
 
 static void usart_pin_setup(uint32_t usart_base)
 {
@@ -30,6 +31,41 @@ static void usart_pin_setup(uint32_t usart_base)
 	}
 }
 
+// someone's gotta typedef these rcc enums
+static void usart_clock_setup(uint32_t usart_base)
+{
+	switch (usart_base)
+	{
+		case USART1:
+		{
+			rcc_periph_clock_enable(RCC_USART1);
+			break;
+		}
+		case USART2:
+		{
+			rcc_periph_clock_enable(RCC_USART2);
+			break;
+		}
+		case USART3:
+		{
+			rcc_periph_clock_enable(RCC_USART3);
+			break;
+		}
+		case UART4:
+		{
+			rcc_periph_clock_enable(RCC_UART4);
+			break;
+		}
+		case UART5:
+		{
+			rcc_periph_clock_enable(RCC_UART5);
+			break;
+		}
+		default:
+			break;
+	}
+}
+
 void usart_setup(
     uint32_t usart_base, 
     uint32_t baud_rate, 
@@ -40,6 +76,7 @@ void usart_setup(
     uint32_t flowcontrol
 )
 {
+	usart_clock_setup(usart_base);
 	usart_pin_setup(usart_base);
 
 	usart_set_baudrate(usart_base, baud_rate);

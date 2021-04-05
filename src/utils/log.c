@@ -20,6 +20,7 @@ const char * level_strings[] =
 
 void log_init(void)
 {
+    usart_setup(USART2, 9600, 8, USART_STOPBITS_1, USART_MODE_TX, USART_PARITY_NONE, USART_FLOWCONTROL_NONE);
     memset(&log_context, 0, sizeof(log_context));
     log_set_level(LOG_LEVEL_DEBUG);
 }
