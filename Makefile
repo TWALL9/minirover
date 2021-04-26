@@ -5,13 +5,20 @@
 #################################################################################
 
 ###############################################################################
-# Executables
 
+# Be silent per default, but 'make V=1' will show all compiler calls.
+ifneq ($(V),1)
+Q := @
+# Do not print "Entering directory ...".
+MAKEFLAGS += --no-print-directory
+endif
+
+# Executables
 BINARY 		= otomo
 DEFS		+= -DSTM32F4
 
-TOP_DIR 	:= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-OPENCM3_DIR 	:= $(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/libopencm3)
+TOP_DIR := $(shell pwd)
+OPENCM3_DIR := $(TOP_DIR)/lib/libopencm3
 SRC_DIRS ?= $(TOP_DIR)/src
 
 SRCFILES := $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)
@@ -91,12 +98,12 @@ list:	$(DEPS) $(BINARY).list
 print-%:
 	@echo $*=$($*)
 
-%.elf %.map: libopencm3/lib/libopencm3_stm32f4.a $(OBJS) $(LDSCRIPT)
+%.elf %.map: $(OPENCM3_DIR)/lib/libopencm3_stm32f4.a $(OBJS) $(LDSCRIPT)
 	$(LD) $(TGT_LDFLAGS) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $(*).elf
 	$(SIZE) $(BINARY).elf
 
-libopencm3/lib/libopencm3_stm32f4.a:
-	$(MAKE) -C libopencm3 TARGETS=stm32/f4
+$(OPENCM3_DIR)/lib/libopencm3_stm32f4.a:
+	$(MAKE) -C $(OPENCM3_DIR) TARGETS=stm32/f4
 
 %.images: %.bin %.hex %.srec %.list %.map
 	@#printf "*** $* images generated ***\n"
@@ -134,8 +141,8 @@ libopencm3/lib/libopencm3_stm32f4.a:
 
 clean:
 	@#printf "  CLEAN\n"
-	rm -f libopencm3/lib/libopencm3_stm32f4.a
-	-$(MAKE) -$(MAKEFLAGS) -C ./libopencm3 clean
+	rm -f $(OPENCM3_DIR)/lib/libopencm3_stm32f4.a
+	-$(MAKE) -$(MAKEFLAGS) -C $(OPENCM3_DIR) clean
 	$(RM) *.o *.d generated.* $(OBJS) $(patsubst %.o,%.d,$(OBJS))
 	rm -f *.elf *.bin *.hex *.srec *.list *.map *.img
 
