@@ -20,6 +20,7 @@ namespace motors
     {
         public:
             MotorDelegate(drive_mode_t mode, int16_t duty);
+            virtual ~MotorDelegate(void) {}; // DO NOT CALL THIS IF YOU KNOW WHAT'S GOOD FOR YOU
             MotorDelegate(void);
             virtual void drive(void) = 0;
             void set_drive_mode(drive_mode_t new_mode);
