@@ -17,6 +17,7 @@ void usart_setup(
     uint32_t flowcontrol
     );
 void usart_send_buf(uint32_t usart_base, const char * buf, uint16_t len);
+bool is_usart_base(uint32_t usart_base);
 
 #ifdef __cplusplus
 }

@@ -99,6 +99,21 @@ void usart_send_buf(uint32_t usart_base, const char * buf, uint16_t len)
     }
 }
 
+bool is_usart_base(uint32_t usart_base)
+{
+	switch (usart_base)
+	{
+		case USART1:
+		case USART2:
+		case USART3:
+		case UART4:
+		case UART5:
+			return true;
+		default:
+			return false;
+	}
+}
+
 #ifdef __cplusplus
 }
 #endif

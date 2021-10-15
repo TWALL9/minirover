@@ -20,34 +20,28 @@
 #define HC06_MAX_CMD_LEN 10 // AT+VERSION
 #define HC06_WRITE_WAIT 1200
 
-
-namespace bluetooth
+class HC06
 {
-    class HC06
-    {
-        public:
-            HC06(uint32_t usart_base);
-            ~HC06(void);
-            
-            void start(void);
-
-            void write_blocking(const char * msg, uint16_t len);
-            uint16_t read_blocking(char * msg);
-
-            void set_pin(const char * pin);
-            void set_name(const char * name);
-
-            void get_pin(char * pin);
-            void get_name(char * name);
+    public:
+        HC06(uint32_t usart_base);
+        ~HC06(void);
         
-        private:
-            uint32_t _usart;
-            char _pin[HC06_PIN_LEN + 1];
-            char _name[HC06_NAME_LEN + 1];
-            char _rx_queue[1024];
-    };
-}
+        void start(void);
 
+        void write_blocking(const char * msg, uint16_t len);
+        uint16_t read_blocking(char * msg);
 
+        void set_pin(const char * pin);
+        void set_name(const char * name);
+
+        void get_pin(char * pin);
+        void get_name(char * name);
+    
+    private:
+        uint32_t _usart;
+        char _pin[HC06_PIN_LEN + 1];
+        char _name[HC06_NAME_LEN + 1];
+        char _rx_queue[1024];
+};
 
 #endif /* HC_O6_H */

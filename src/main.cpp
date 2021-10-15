@@ -6,7 +6,7 @@
 #include "utils/delay.h"
 #include "peripherals/usart.h"
 #include "peripherals/gpio.h"
-#include "utils/log.h"
+#include "utils/debug.h"
 #include "drivers/ultrasonic.h"
 #include "drivers/h_bridge.h"
 #include "drivers/continuous_servo.h"
@@ -68,6 +68,9 @@ int main(void)
     timer_setup();
     gpio_setup();
 
+    SerialDebug debug = SerialDebug(USART1, 115200);
+    debug.set_handle("main");
+
 	int16_t pulse[] = {-1000, -500, 0, 500, 1000};
     uint8_t i = 0;
 
@@ -76,18 +79,16 @@ int main(void)
     motors::HBridge hb = motors::HBridge(TIM2, TIM_OC3, TIM2, TIM_OC4);
     hb.set_drive_mode(motors::drive_mode_t::DRIVE);
 
-    //log_init();
+    debug.debug(LOG_LEVEL_DEBUG, "hey");
 
-    bluetooth::HC06 b = bluetooth::HC06(USART2);
+    HC06 b = HC06(USART2);
 
     for (;;) 
     {
-        // DEBUG("Hey");
         // delay_ms(1000);
         b.start();
         uint8_t res[10];
         // uint16_t len = b.read_blocking(res);
-        // DEBUG("%s", res);
 
     }
 
