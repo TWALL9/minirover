@@ -27,6 +27,7 @@ class HC06
         ~HC06(void);
         
         void start(void);
+        void reset(void);
 
         void write_blocking(const char * msg, uint16_t len);
         uint16_t read_blocking(char * msg);
@@ -38,7 +39,8 @@ class HC06
         void get_name(char * name);
     
     private:
-        uint32_t _usart;
+        uint32_t _usart = 0;
+        bool _init = false;
         char _pin[HC06_PIN_LEN + 1];
         char _name[HC06_NAME_LEN + 1];
         char _rx_queue[1024];

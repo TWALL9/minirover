@@ -6,6 +6,8 @@
 HC06::HC06(uint32_t usart_base):
 _usart(usart_base)
 {
+    this->_init = false;
+
     memset(this->_pin, 0, sizeof(this->_pin));
     memset(this->_name, 0, sizeof(this->_name));
     memset(this->_rx_queue, 0, sizeof(this->_rx_queue));
@@ -29,6 +31,16 @@ HC06::~HC06(void)
 void HC06::start(void)
 {
     this->write_blocking("AT", strlen("AT"));
+    this->_init = true;
+}
+
+void HC06::reset(void)
+{
+    if (this->_init)
+    {
+        this->write_blocking("AT+RESET", strlen("AT+RESET"));
+        this->_init = false;
+    }
 }
 
 void HC06::write_blocking(const char * msg, uint16_t len)
