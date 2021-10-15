@@ -31,8 +31,8 @@ namespace bluetooth
             
             void start(void);
 
-            void write(const char * msg, uint16_t len);
-            uint16_t read(char * msg);
+            void write_blocking(const char * msg, uint16_t len);
+            uint16_t read_blocking(char * msg);
 
             void set_pin(const char * pin);
             void set_name(const char * name);

@@ -5,9 +5,9 @@
 
 namespace bluetooth
 {
-    HC06::HC06(uint32_t usart_base)
+    HC06::HC06(uint32_t usart_base):
+    _usart(usart_base)
     {
-        this->_usart = usart_base;
         memset(this->_pin, 0, sizeof(this->_pin));
         memset(this->_name, 0, sizeof(this->_name));
         memset(this->_rx_queue, 0, sizeof(this->_rx_queue));
@@ -30,16 +30,16 @@ namespace bluetooth
 
     void HC06::start(void)
     {
-        this->write("AT", strlen("AT"));
+        this->write_blocking("AT", strlen("AT"));
     }
 
-    void HC06::write(const char * msg, uint16_t len)
+    void HC06::write_blocking(const char * msg, uint16_t len)
     {
         usart_send_buf(this->_usart, msg, len);
         delay_ms(HC06_WRITE_WAIT);
     }
 
-    uint16_t HC06::read(char * msg)
+    uint16_t HC06::read_blocking(char * msg)
     {
         uint16_t len = 0;
         char new_byte = 'a';
@@ -61,7 +61,7 @@ namespace bluetooth
         strcpy(cmd, "AT+PIN");
         strcpy(this->_pin, pin);
         strcpy(cmd, pin);
-        this->write(cmd, strlen(cmd));
+        this->write_blocking(cmd, strlen(cmd));
     }
 
     void HC06::set_name(const char * name)
@@ -70,7 +70,7 @@ namespace bluetooth
         strcpy(cmd, "AT+NAME");
         strcpy(this->_name, name);
         strcpy(cmd, name);
-        this->write(cmd, strlen(cmd));
+        this->write_blocking(cmd, strlen(cmd));
     }
 
     void HC06::get_pin(char * pin)

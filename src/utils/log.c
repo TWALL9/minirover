@@ -6,14 +6,12 @@
 #include <string.h>
 #include "peripherals/usart.h"
 
-#define MAX_DEBUG_LEN 64
-
 static struct
 {
     LogLevel_t level;
 }log_context;
 
-const char * level_strings[] =
+static const char * level_strings[] =
 {
     "[DEBUG]: ", "[INFO]: ", "[WARN]: ", "[ERROR]: "
 };

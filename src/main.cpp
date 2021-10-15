@@ -71,8 +71,10 @@ int main(void)
 	int16_t pulse[] = {-1000, -500, 0, 500, 1000};
     uint8_t i = 0;
 
-    motors::ContinuousServo cs = motors::ContinuousServo(TIM2, TIM_OC3);
-    cs.set_drive_mode(motors::DRIVE);
+    //motors::ContinuousServo cs = motors::ContinuousServo(TIM2, TIM_OC3);
+    //cs.set_drive_mode(motors::DRIVE);
+    motors::HBridge hb = motors::HBridge(TIM2, TIM_OC3, TIM2, TIM_OC4);
+    hb.set_drive_mode(motors::drive_mode_t::DRIVE);
 
     //log_init();
 
@@ -83,9 +85,10 @@ int main(void)
         // DEBUG("Hey");
         // delay_ms(1000);
         b.start();
-        char res[10];
-        uint16_t len = b.read(res);
-        DEBUG("%s", res);
+        uint8_t res[10];
+        // uint16_t len = b.read_blocking(res);
+        // DEBUG("%s", res);
+
     }
 
     return 0;

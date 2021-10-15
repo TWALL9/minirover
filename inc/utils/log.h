@@ -10,6 +10,8 @@ extern "C" {
 #include <stdarg.h>
 #include <stdbool.h>
 
+#define MAX_DEBUG_LEN 64
+
 typedef enum 
 {
     LOG_LEVEL_DEBUG = 0,
