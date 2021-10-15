@@ -7,3 +7,6 @@
 [submodule "otomo-protobuf"]
 	path = otomo-protobuf
 	url = git@github.com:TWALL9/otomo-protobuf.git
+[submodule "lib/nanopb"]
+	path = lib/nanopb
+	url = https://github.com/nanopb/nanopb.git
