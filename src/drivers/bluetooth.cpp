@@ -43,6 +43,27 @@ void HC06::reset(void)
     }
 }
 
+// There are two ways to do this
+// 1. The "AT" command doesn't receive a response while connected
+// 2. Use the LED on the module
+// 3. We can also do nothing since the device itself is non-blocking
+bool HC06::check_connect(void)
+{
+    this->write_blocking("AT", strlen("AT"));
+    delay_ms(250);
+    char read_check[3] = {'0'};
+
+    uint16_t len = this->read_blocking(read_check);
+    if (strncmp("OK", read_check, len) == 0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
 void HC06::write_blocking(const char * msg, uint16_t len)
 {
     usart_send_buf(this->_usart, msg, len);

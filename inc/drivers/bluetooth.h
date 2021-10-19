@@ -15,7 +15,7 @@
  */
 
 #define HC06_PIN_LEN 4
-#define HC06_DEFAULT_BAUD_RATE 9600
+#define HC06_DEFAULT_BAUD_RATE 38400
 #define HC06_NAME_LEN 40
 #define HC06_MAX_CMD_LEN 10 // AT+VERSION
 #define HC06_WRITE_WAIT 1200
@@ -28,6 +28,7 @@ class HC06
         
         void start(void);
         void reset(void);
+        bool check_connect(void);
 
         void write_blocking(const char * msg, uint16_t len);
         uint16_t read_blocking(char * msg);
