@@ -20,9 +20,11 @@ DEFS		+= -DSTM32F4
 TOP_DIR := $(shell pwd)
 OPENCM3_DIR := $(TOP_DIR)/lib/libopencm3
 SRC_DIRS ?= $(TOP_DIR)/src
+OBJ_DIR = obj
+BIN_DIR = bin
 
 SRCFILES := $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)
-OBJS := $(addsuffix .o, $(basename $(SRCFILES)))
+OBJS := $(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(basename $(SRCFILES))))
 
 # Modifications from original STM32F1 implementation
 # Change from Cortex M3 to M4 with hardware floating point
@@ -47,14 +49,16 @@ DEBUG		:= -ggdb3
 CSTD		?= -std=c11
 CXXSTD		?= -std=c++11
 
+INCLUDES = -I$(TOP_DIR)/inc
+INCLUDES += -I$(OPENCM3_DIR)/include
+
 LDSCRIPT	?= $(TOP_DIR)/stm32f4-discovery.ld
 TGT_CFLAGS	+= $(OPT) $(CSTD)
 TGT_CFLAGS	+= $(ARCH_FLAGS)
 TGT_CFLAGS	+= -Wextra -Wshadow -Wimplicit-function-declaration
 TGT_CFLAGS	+= -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes
 TGT_CFLAGS	+= -fno-common -ffunction-sections -fdata-sections
-TGT_CFLAGS  += -I$(TOP_DIR)/inc
-TGT_CFLAGS	+= -I$(OPENCM3_DIR)/include
+TGT_CFLAGS  += $(INCLUDES)
 #TGT_CFLAGS	+= -I$(TOP_DIR)/rtos/libwwg/include
 
 TGT_CXXFLAGS	+= $(OPT) $(CXXSTD)
@@ -65,14 +69,13 @@ TGT_CXXFLAGS	+= -fno-common -ffunction-sections -fdata-sections
 TGT_CPPFLAGS	+= -MD
 TGT_CPPFLAGS	+= -Wall -Wundef
 TGT_CPPFLAGS	+= $(DEFS)
-TGT_CPPFLAGS  	+= -I$(TOP_DIR)/inc
-TGT_CPPFLAGS	+= -I$(OPENCM3_DIR)/include
+TGT_CPPFLAGS  	+= $(INCLUDES)
 #TGT_CPPFLAGS	+= -I$(TOP_DIR)/rtos/libwwg/include
 
 TGT_LDFLAGS	+= --static -nostartfiles
 TGT_LDFLAGS	+= -T$(LDSCRIPT)
 TGT_LDFLAGS	+= $(ARCH_FLAGS)
-TGT_LDFLAGS	+= -Wl,-Map=$(*).map
+TGT_LDFLAGS	+= -Wl,-Map=$(BIN_DIR)/$(*).map
 TGT_LDFLAGS	+= -Wl,--gc-sections
 
 LDLIBS		+= -specs=nosys.specs
@@ -94,57 +97,46 @@ list:	$(DEPS) $(BINARY).list
 # how that ended up being resolved by all of the included
 # makefiles.
 
+all: libopencm3 $(BIN_DIR)/$(BINARY).bin 
+
 # These rules simply denote where to place the build files in your system.
 print-%:
 	@echo $*=$($*)
 
-%.elf %.map: $(OPENCM3_DIR)/lib/libopencm3_stm32f4.a $(OBJS) $(LDSCRIPT)
-	$(LD) $(TGT_LDFLAGS) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $(*).elf
-	$(SIZE) $(BINARY).elf
-
-$(OPENCM3_DIR)/lib/libopencm3_stm32f4.a:
+libopencm3:
 	$(MAKE) -C $(OPENCM3_DIR) TARGETS=stm32/f4
 
-%.images: %.bin %.hex %.srec %.list %.map
-	@#printf "*** $* images generated ***\n"
+$(BIN_DIR)/%.bin: $(BIN_DIR)/%.elf
+	@#printf "  OBJCOPY $@\n"
+	$(OBJCOPY) -Obinary $< $@
 
-%.bin: %.elf
-	@#printf "  OBJCOPY $(*).bin\n"
-	$(OBJCOPY) -Obinary $(*).elf $(*).bin
+$(BIN_DIR)/%.elf $(BIN_DIR)/%.map: $(OBJS) $(LDSCRIPT)
+	$(LD) $(TGT_LDFLAGS) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $@
+	$(SIZE) $(BINARY).elf
 
-%.hex: %.elf
-	@#printf "  OBJCOPY $(*).hex\n"
-	$(OBJCOPY) -Oihex $(*).elf $(*).hex
-
-%.srec: %.elf
-	@#printf "  OBJCOPY $(*).srec\n"
-	$(OBJCOPY) -Osrec $(*).elf $(*).srec
-
-%.list: %.elf
-	@#printf "  OBJDUMP $(*).list\n"
-	$(OBJDUMP) -S $(*).elf > $(*).list
-
-%.o: %.c
+$(OBJ_DIR)/%.o: %.c
 	@#printf "  CC      $(*).c\n"
-	$(CC) $(TGT_CFLAGS) $(CFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $(*).o -c $(*).c
+	mkdir -p $(dir $@)
+	$(CC) $(TGT_CFLAGS) $(CFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $@ -c $<
 
-%.o: %.cxx
+$(OBJ_DIR)/%.o: %.cxx
 	@#printf "  CXX     $(*).cxx\n"
-	$(CXX) $(TGT_CXXFLAGS) $(CXXFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $(*).o -c $(*).cxx
+	mkdir -p $(dir $@)
+	$(CXX) $(TGT_CXXFLAGS) $(CXXFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $@ -c $<
 
-%.o: %.cpp
+$(OBJ_DIR)/%.o: %.cpp
 	@#printf "  CXX     $(*).cpp\n"
-	$(CXX) $(TGT_CXXFLAGS) $(CXXFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $(*).o -c $(*).cpp
+	mkdir -p $(dir $@)
+	$(CXX) $(TGT_CXXFLAGS) $(CXXFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $@ -c $<
 
-%.o: %.asm
+$(OBJ_DIR)/%.o: %.asm
 	$(AS) $(ASFLAGS) -o $*.o -c $<
 
 clean:
 	@#printf "  CLEAN\n"
 	rm -f $(OPENCM3_DIR)/lib/libopencm3_stm32f4.a
 	-$(MAKE) -$(MAKEFLAGS) -C $(OPENCM3_DIR) clean
-	$(RM) *.o *.d generated.* $(OBJS) $(patsubst %.o,%.d,$(OBJS))
-	rm -f *.elf *.bin *.hex *.srec *.list *.map *.img
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
 # Flash Device
 flash:	$(BINARY).bin
