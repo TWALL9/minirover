@@ -99,20 +99,20 @@ $(BIN_DIR)/%.bin: $(BIN_DIR)/%.elf
 $(BIN_DIR)/%.elf $(BIN_DIR)/%.map: $(OBJS) $(LDSCRIPT)
 	mkdir -p $(dir $@)
 	$(LD) $(TGT_LDFLAGS) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $@
-	$(SIZE) $(BINARY).elf
+	$(SIZE) $@
 
 $(OBJ_DIR)/%.o: %.c
-	@#printf "  CC      $(*).c\n"
+	@#printf "  CC      $<\n"
 	mkdir -p $(dir $@)
 	$(CC) $(TGT_CFLAGS) $(CFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $@ -c $<
 
 $(OBJ_DIR)/%.o: %.cxx
-	@#printf "  CXX     $(*).cxx\n"
+	@#printf "  CXX     $<\n"
 	mkdir -p $(dir $@)
 	$(CXX) $(TGT_CXXFLAGS) $(CXXFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $@ -c $<
 
 $(OBJ_DIR)/%.o: %.cpp
-	@#printf "  CXX     $(*).cpp\n"
+	@#printf "  CXX     $<\n"
 	mkdir -p $(dir $@)
 	$(CXX) $(TGT_CXXFLAGS) $(CXXFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $@ -c $<
 
@@ -126,10 +126,5 @@ clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
 # Flash Device
-flash:	$(BINARY).bin
-	# $(STFLASH) $(FLASHSIZE) write $(BINARY).bin 0x8000000
-	$(STFLASH) write $(BINARY).bin 0x8000000
-
-.PHONY: images clean elf bin hex srec list all
-
--include $(OBJS:.o=.d)
+flash:	$(BIN_DIR)/$(BINARY).bin
+	$(STFLASH) write $(BIN_DIR)/$(BINARY).bin 0x8000000
