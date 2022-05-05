@@ -8,14 +8,14 @@
             "includePath": [
                 "/home/tom/otomo/inc",
                 "/home/tom/otomo/src",
-                "/home/tom/otomo/libopencm3"
+                "/home/tom/otomo/lib/libopencm3"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
                     "/home/tom/otomo/inc",
                     "/home/tom/otomo/src",
-                    "/home/tom/otomo/libopencm3"
+                    "/home/tom/otomo/lib/libopencm3"
                 ]
             },
             "intelliSenseMode": "clang-x64",

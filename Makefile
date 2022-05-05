@@ -75,27 +75,12 @@ TGT_CPPFLAGS  	+= $(INCLUDES)
 TGT_LDFLAGS	+= --static -nostartfiles
 TGT_LDFLAGS	+= -T$(LDSCRIPT)
 TGT_LDFLAGS	+= $(ARCH_FLAGS)
-TGT_LDFLAGS	+= -Wl,-Map=$(BIN_DIR)/$(*).map
+TGT_LDFLAGS	+= -Wl,-Map=$(BIN_DIR)/$(BINARY).map
 TGT_LDFLAGS	+= -Wl,--gc-sections
 
 LDLIBS		+= -specs=nosys.specs
 LDLIBS		+= -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 LDLIBS		+= -L$(OPENCM3_DIR)/lib -lopencm3_stm32f4
-
-.SUFFIXES:	.elf .bin .hex .srec .list .map .images
-.SECONDEXPANSION:
-.SECONDARY:
-
-elf:	$(DEPS) $(BINARY).elf
-bin:	$(DEPS) $(BINARY).bin
-hex:	$(DEPS) $(BINARY).hex
-srec:	$(DEPS) $(BINARY).srec
-list:	$(DEPS) $(BINARY).list
-
-# Define a helper macro for debugging make errors online
-# you can type "make print-OPENCM3_DIR" and it will show you
-# how that ended up being resolved by all of the included
-# makefiles.
 
 all: libopencm3 $(BIN_DIR)/$(BINARY).bin 
 
@@ -108,9 +93,11 @@ libopencm3:
 
 $(BIN_DIR)/%.bin: $(BIN_DIR)/%.elf
 	@#printf "  OBJCOPY $@\n"
+	mkdir -p $(dir $@)
 	$(OBJCOPY) -Obinary $< $@
 
 $(BIN_DIR)/%.elf $(BIN_DIR)/%.map: $(OBJS) $(LDSCRIPT)
+	mkdir -p $(dir $@)
 	$(LD) $(TGT_LDFLAGS) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $@
 	$(SIZE) $(BINARY).elf
 
